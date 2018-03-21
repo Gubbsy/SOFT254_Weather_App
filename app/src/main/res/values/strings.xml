@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">Weather FTW!</string>
+    <string name="title_record">Record</string>
+    <string name="title_map">Map</string>
+</resources>
