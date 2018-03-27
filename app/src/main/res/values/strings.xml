@@ -2,4 +2,8 @@
     <string name="app_name">Weather FTW!</string>
     <string name="title_record">Record</string>
     <string name="title_map">Map</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_record_fragment">Hello record fragment</string>
+    <string name="hello_map_fragment">Hello map fragment</string>
 </resources>
