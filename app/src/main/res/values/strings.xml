@@ -6,4 +6,12 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_record_fragment">Hello record fragment</string>
     <string name="hello_map_fragment">Hello map fragment</string>
+    <string name="feels_like">Feels Like:</string>
+    <string name="weather_type">Weather Type:</string>
+    <string name="wind_direction">Wind Direction:</string>
+    <string name="wind_speed">Wind Speed:</string>
+    <string name="pressure">Pressure:</string>
+    <string name="recorded_temp">Recorded Temp:</string>
+    <string name="record_instructions">Please enter the following fields:</string>
+    <string name="submit">Submit Data</string>
 </resources>

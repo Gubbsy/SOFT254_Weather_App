@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="weather_type_array">
+        <item>Sunny</item>
+        <item>Overcast</item>
+        <item>Light Rain</item>
+        <item>Heavy Rain</item>
+        <item>Thunder Storm</item>
+        <item>Snow</item>
+        <item>Sleet</item>
+        <item>Hail</item>
+    </string-array>
+
+    <string-array name="wind_direction_array">
+        <item>N</item>
+        <item>NE</item>
+        <item>E</item>
+        <item>SE</item>
+        <item>S</item>
+        <item>SW</item>
+        <item>W</item>
+        <item>NW</item>
+    </string-array>
+</resources>
