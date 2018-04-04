@@ -30,31 +30,25 @@ import static android.content.Context.SENSOR_SERVICE;
  * A simple {@link Fragment} subclass.
  */
 public class RecordFragment extends Fragment implements View.OnClickListener, SensorEventListener{
+
     private RecordItem recordItem;
 
     private Button buttonSubmit = null;
-    private EditText editTextFeelsLike = null;
-    private Spinner spinnerWeatherType = null;
-    private Spinner spinnerWindDirection = null;
-    private EditText editTextWindSpeed = null;
-    private TextView textViewPressure = null;
-    private TextView textViewRecordedTemp = null;
+    private EditText editTextFeelsLike, editTextWindSpeed;
+    private Spinner spinnerWeatherType, spinnerWindDirection;
+    private TextView textViewPressure, textViewRecordedTemp;
 
-    private double feelsLike = 0;
     private WeatherType weatherType = WeatherType.HAIL;
     private WindDirection windDirection = WindDirection.W;
-    private double windSpeed = 0;
-    private double pressure = 0;
-    private double recordedTemp = 0;
+    private double feelsLike, windSpeed, pressure, recordedTemp;
 
     private SensorManager sensorManager;
-    private Sensor pressureSensor;
-    private Sensor tempSensor;
+    private Sensor pressureSensor, tempSensor;
 
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_record, container, false);
 
@@ -69,17 +63,24 @@ public class RecordFragment extends Fragment implements View.OnClickListener, Se
 
         //Register Sensors
         sensorManager = (SensorManager) getActivity().getSystemService(SENSOR_SERVICE);
-        pressureSensor = sensorManager.getDefaultSensor(Sensor.TYPE_PRESSURE);
-        //tempSensor = sensorManager.getDefaultSensor(Sensor.TYPE_AMBIENT_TEMPERATURE);
+
+        //Check if device has a Pressure Sensor. If not, return error message.
+        if(sensorManager.getDefaultSensor(Sensor.TYPE_PRESSURE) != null) {
+            pressureSensor = sensorManager.getDefaultSensor(Sensor.TYPE_PRESSURE);
+
+        } else {
+            Log.i(TAG, "Device has no Pressure Sensor built-in!");
+            textViewPressure.setText("Sensor not found.");
+        }
 
         //Check if device has a Ambient Temperature Sensor
-        if(sensorManager.getDefaultSensor(Sensor.TYPE_AMBIENT_TEMPERATURE) != null) {
+        /*if(sensorManager.getDefaultSensor(Sensor.TYPE_AMBIENT_TEMPERATURE) != null) {
             tempSensor = sensorManager.getDefaultSensor(Sensor.TYPE_AMBIENT_TEMPERATURE);
 
         } else {
             Log.i(TAG, "Device has no Ambient Temperature Sensor built-in!");
             textViewRecordedTemp.setText("Sensor not found.");
-        }
+        }*/
 
         return view;
     }
@@ -90,12 +91,12 @@ public class RecordFragment extends Fragment implements View.OnClickListener, Se
         {
             textViewPressure.setText(String.format("%.3f mbar", event.values[0]));
         }
-        else if(event.sensor.getType() == Sensor.TYPE_AMBIENT_TEMPERATURE)
+        /*else if(event.sensor.getType() == Sensor.TYPE_AMBIENT_TEMPERATURE)
         {
             //textViewRecordedTemp.setText(String.format("%.3f °C", event.values[0]));
             float temperature = event.values[0];
             textViewRecordedTemp.setText(temperature + "°C");
-        }
+        }*/
     }
 
     @Override
@@ -115,7 +116,7 @@ public class RecordFragment extends Fragment implements View.OnClickListener, Se
     @Override
     public void onResume() {
         super.onResume();
-        sensorManager.registerListener(this, tempSensor, SensorManager.SENSOR_DELAY_NORMAL);
+        //sensorManager.registerListener(this, tempSensor, SensorManager.SENSOR_DELAY_NORMAL);
         sensorManager.registerListener(this, pressureSensor, SensorManager.SENSOR_DELAY_NORMAL);
     }
 
