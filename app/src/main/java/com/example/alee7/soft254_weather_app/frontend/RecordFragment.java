@@ -5,8 +5,10 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.nfc.Tag;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,6 +22,7 @@ import com.example.alee7.soft254_weather_app.backend.RecordItem;
 import com.example.alee7.soft254_weather_app.enumerator.WeatherType;
 import com.example.alee7.soft254_weather_app.enumerator.WindDirection;
 
+import static android.content.ContentValues.TAG;
 import static android.content.Context.SENSOR_SERVICE;
 
 
@@ -55,12 +58,6 @@ public class RecordFragment extends Fragment implements View.OnClickListener, Se
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_record, container, false);
 
-        //Register Sensors
-        sensorManager = (SensorManager) getActivity().getSystemService(SENSOR_SERVICE);
-        pressureSensor = sensorManager.getDefaultSensor(Sensor.TYPE_PRESSURE);
-        tempSensor = sensorManager.getDefaultSensor(Sensor.TYPE_AMBIENT_TEMPERATURE);
-
-
         //Register UI Components
         buttonSubmit = getActivity().findViewById(R.id.button_submit);
         editTextFeelsLike = getActivity().findViewById(R.id.feels_like_editText);
@@ -69,6 +66,20 @@ public class RecordFragment extends Fragment implements View.OnClickListener, Se
         spinnerWindDirection = getActivity().findViewById(R.id.wind_direction_spinner);
         textViewPressure = view.findViewById(R.id.pressure_recorded);
         textViewRecordedTemp = view.findViewById(R.id.temp_recorded);
+
+        //Register Sensors
+        sensorManager = (SensorManager) getActivity().getSystemService(SENSOR_SERVICE);
+        pressureSensor = sensorManager.getDefaultSensor(Sensor.TYPE_PRESSURE);
+        //tempSensor = sensorManager.getDefaultSensor(Sensor.TYPE_AMBIENT_TEMPERATURE);
+
+        //Check if device has a Ambient Temperature Sensor
+        if(sensorManager.getDefaultSensor(Sensor.TYPE_AMBIENT_TEMPERATURE) != null) {
+            tempSensor = sensorManager.getDefaultSensor(Sensor.TYPE_AMBIENT_TEMPERATURE);
+
+        } else {
+            Log.i(TAG, "Device has no Ambient Temperature Sensor built-in!");
+            textViewRecordedTemp.setText("Sensor not found.");
+        }
 
         return view;
     }
