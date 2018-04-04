@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".RecordFragment">
+    tools:context=".frontend.RecordFragment">
 
   <RelativeLayout
       android:layout_width="match_parent"
@@ -125,13 +125,13 @@
           android:id="@+id/pressure_recorded"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
-          android:layout_alignParentEnd="true"
           android:layout_alignBottom="@+id/pressure_text"
+          android:layout_alignParentEnd="true"
           android:layout_marginStart="18dp"
           android:layout_toEndOf="@+id/recorded_temp_text"
-          android:textSize="20dp"
+          android:text="0"
           android:textAlignment="center"
-          android:text="0"/>
+          android:textSize="20dp" />
 
       <TextView
           android:id="@+id/temp_recorded"
@@ -146,12 +146,13 @@
           android:text="0"/>
 
       <Button
+          android:id="@+id/button_submit"
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
           android:layout_below="@id/temp_recorded"
           android:layout_marginTop="30dp"
-          android:textSize="20dp"
-          android:text="@string/submit"/>
+          android:text="@string/submit"
+          android:textSize="20dp" />
 
 
 
