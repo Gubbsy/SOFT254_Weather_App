@@ -97,8 +97,7 @@
           android:layout_height="wrap_content"
           android:layout_alignBaseline="@+id/weather_type_text"
           android:layout_alignBottom="@+id/weather_type_text"
-          android:layout_alignStart="@+id/feels_like_editText"
-          android:entries="@array/weather_type_array" />
+          android:layout_alignStart="@+id/feels_like_editText" />
 
       <Spinner
           android:id="@+id/wind_direction_spinner"
@@ -106,8 +105,7 @@
           android:layout_height="wrap_content"
           android:layout_alignBottom="@+id/wind_direction_text"
           android:layout_alignParentEnd="true"
-          android:layout_alignStart="@+id/wind_speed_editText"
-          android:entries="@array/wind_direction_array" />
+          android:layout_alignStart="@+id/wind_speed_editText" />
 
       <EditText
           android:id="@+id/wind_speed_editText"
