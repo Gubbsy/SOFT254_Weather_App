@@ -16,6 +16,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.alee7.soft254_weather_app.R;
 import com.example.alee7.soft254_weather_app.backend.RecordItem;
@@ -33,15 +34,17 @@ public class RecordFragment extends Fragment implements SensorEventListener{
 
     private RecordItem recordItem;
     private Boolean sensorHasRecorded = false;
+    private Boolean allFieldsFilled = true;
 
-    private Button buttonSubmit = null;
+    private Button buttonSubmit, buttonClear;
+
     private EditText editTextFeelsLike, editTextWindSpeed;
     private Spinner spinnerWeatherType, spinnerWindDirection;
     private TextView textViewPressure, textViewRecordedTemp;
 
-    private WeatherType weatherType = WeatherType.HAIL;
-    private WindDirection windDirection = WindDirection.W;
-    private double feelsLike, windSpeed, pressure, recordedTemp;
+    private WeatherType weatherType = null;
+    private WindDirection windDirection = null;
+    private double feelsLike, windSpeed, pressure, recordedTemp = 0;
 
     private SensorManager sensorManager;
     private Sensor pressureSensor, tempSensor;
@@ -55,6 +58,7 @@ public class RecordFragment extends Fragment implements SensorEventListener{
 
         //Register UI Components
         buttonSubmit = view.findViewById(R.id.button_submit);
+        buttonClear = view.findViewById(R.id.button_clear);
         editTextFeelsLike = view.findViewById(R.id.feels_like_editText);
         editTextWindSpeed = view.findViewById(R.id.wind_speed_editText);
         spinnerWeatherType = view.findViewById(R.id.weather_type_spinner);
@@ -85,24 +89,38 @@ public class RecordFragment extends Fragment implements SensorEventListener{
             public void onClick(View view) {
                 Log.i(TAG,"Submit Button Pressed");
 
-                feelsLike = Double.parseDouble(editTextFeelsLike.getText().toString());
-                windSpeed = Double.parseDouble(editTextWindSpeed.getText().toString());
-                weatherType = WeatherType.getEnumByIndex(spinnerWeatherType.getSelectedItemPosition());
-                windDirection = WindDirection.getEnumByIndex(spinnerWindDirection.getSelectedItemPosition());
-                recordedTemp = 0.0;
+                if(editTextFeelsLike.getText().toString().trim().length() > 0 || editTextWindSpeed.getText().toString().trim().length() > 0){
 
-                recordItem = new RecordItem(feelsLike, weatherType, windDirection, windSpeed, pressure, recordedTemp);
+                    feelsLike = Double.parseDouble(editTextFeelsLike.getText().toString());
+                    windSpeed = Double.parseDouble(editTextWindSpeed.getText().toString());
+                    weatherType = WeatherType.getEnumByIndex(spinnerWeatherType.getSelectedItemPosition());
+                    windDirection = WindDirection.getEnumByIndex(spinnerWindDirection.getSelectedItemPosition());
+                    recordedTemp = 0.0;
 
-                Log.i(TAG, "Record Item feelsLike: " + recordItem.getFeelsLike());
-                Log.i(TAG, "Record Item weather type: " + recordItem.getWeatherType().toString());
-                Log.i(TAG, "Record Item wind Direction: " + recordItem.getWindDirection().toString());
-                Log.i(TAG, "Record Item wind speed: " + recordItem.getWindSpeed());
-                Log.i(TAG, "Record Item pressure: " + recordItem.getLocalPressure());
-                Log.i(TAG, "Record Item temp: " + recordItem.getRecordedTemp());
+                    recordItem = new RecordItem(feelsLike, weatherType, windDirection, windSpeed, pressure, recordedTemp);
 
+                    Log.i(TAG, "Record Item feelsLike: " + recordItem.getFeelsLike());
+                    Log.i(TAG, "Record Item weather type: " + recordItem.getWeatherType().toString());
+                    Log.i(TAG, "Record Item wind Direction: " + recordItem.getWindDirection().toString());
+                    Log.i(TAG, "Record Item wind speed: " + recordItem.getWindSpeed());
+                    Log.i(TAG, "Record Item pressure: " + recordItem.getLocalPressure());
+                    Log.i(TAG, "Record Item temp: " + recordItem.getRecordedTemp());
+
+                }else
+                    Toast.makeText(getActivity(), "Please enter all fields", Toast.LENGTH_SHORT).show();
             }
         });
 
+        buttonClear.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                editTextFeelsLike.setText("");
+                editTextWindSpeed.setText("");
+                sensorHasRecorded = false;
+                spinnerWeatherType.setSelection(0);
+                spinnerWindDirection.setSelection(0);
+            }
+        });
         return view;
     }
 
