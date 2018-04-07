@@ -84,12 +84,22 @@ public class RecordFragment extends Fragment implements SensorEventListener{
             @Override
             public void onClick(View view) {
                 Log.i(TAG,"Submit Button Pressed");
+
                 feelsLike = Double.parseDouble(editTextFeelsLike.getText().toString());
                 windSpeed = Double.parseDouble(editTextWindSpeed.getText().toString());
                 weatherType = WeatherType.getEnumByIndex(spinnerWeatherType.getSelectedItemPosition());
                 windDirection = WindDirection.getEnumByIndex(spinnerWindDirection.getSelectedItemPosition());
-                Log.i(TAG, "Weather Type is: " + weatherType.toString());
-                Log.i(TAG, "Wind Direction: " + windDirection.toString());
+                recordedTemp = 0.0;
+
+                recordItem = new RecordItem(feelsLike, weatherType, windDirection, windSpeed, pressure, recordedTemp);
+
+                Log.i(TAG, "Record Item feelsLike: " + recordItem.getFeelsLike());
+                Log.i(TAG, "Record Item weather type: " + recordItem.getWeatherType().toString());
+                Log.i(TAG, "Record Item wind Direction: " + recordItem.getWindDirection().toString());
+                Log.i(TAG, "Record Item wind speed: " + recordItem.getWindSpeed());
+                Log.i(TAG, "Record Item pressure: " + recordItem.getLocalPressure());
+                Log.i(TAG, "Record Item temp: " + recordItem.getRecordedTemp());
+
             }
         });
 
