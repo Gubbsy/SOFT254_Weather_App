@@ -16,7 +16,7 @@ public class RecordItem {
     }
 
     //Constructor
-    private RecordItem(double feelsLike, WeatherType weatherType, WindDirection windDirection, double windSpeed, double localPressure, double recordedTemp) {
+    public RecordItem(double feelsLike, WeatherType weatherType, WindDirection windDirection, double windSpeed, double localPressure, double recordedTemp) {
         this.feelsLike = feelsLike;
         this.weatherType = weatherType;
         this.windDirection = windDirection;
