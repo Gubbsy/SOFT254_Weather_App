@@ -89,7 +89,7 @@ public class RecordFragment extends Fragment implements SensorEventListener{
             public void onClick(View view) {
                 Log.i(TAG,"Submit Button Pressed");
 
-                if(editTextFeelsLike.getText().toString().trim().length() > 0 || editTextWindSpeed.getText().toString().trim().length() > 0){
+                if(editTextFeelsLike.getText().toString().trim().length() > 0 && editTextWindSpeed.getText().toString().trim().length() > 0){
 
                     feelsLike = Double.parseDouble(editTextFeelsLike.getText().toString());
                     windSpeed = Double.parseDouble(editTextWindSpeed.getText().toString());
