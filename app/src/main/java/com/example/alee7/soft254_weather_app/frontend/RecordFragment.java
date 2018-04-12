@@ -1,10 +1,14 @@
 package com.example.alee7.soft254_weather_app.frontend;
 
 
+import android.content.Context;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -30,7 +34,7 @@ import static android.content.Context.SENSOR_SERVICE;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class RecordFragment extends Fragment implements SensorEventListener{
+public class RecordFragment extends Fragment implements SensorEventListener, LocationListener{
 
     private RecordItem recordItem;
     private Boolean sensorHasRecorded = false;
@@ -45,9 +49,13 @@ public class RecordFragment extends Fragment implements SensorEventListener{
     private WeatherType weatherType = null;
     private WindDirection windDirection = null;
     private double feelsLike, windSpeed, pressure, recordedTemp = 0;
+    private double longitude, latitiude = 0;
 
     private SensorManager sensorManager;
-    private Sensor pressureSensor, tempSensor;
+    private Sensor pressureSensor;
+
+    private LocationListener listener;
+    private LocationManager locationManager;
 
 
     @Override
@@ -71,8 +79,13 @@ public class RecordFragment extends Fragment implements SensorEventListener{
         spinnerWindDirection.setAdapter(new ArrayAdapter<WindDirection>(getActivity(),android.R.layout.simple_list_item_1,windDirection.values()));
 
 
+
+
+
         //Register Sensors
         sensorManager = (SensorManager) getActivity().getSystemService(SENSOR_SERVICE);
+
+
 
         //Check if device has a Pressure Sensor. If not, return error message.
         if(sensorManager.getDefaultSensor(Sensor.TYPE_PRESSURE) != null) {
@@ -90,6 +103,7 @@ public class RecordFragment extends Fragment implements SensorEventListener{
                 Log.i(TAG,"Submit Button Pressed");
 
                 if(editTextFeelsLike.getText().toString().trim().length() > 0 && editTextWindSpeed.getText().toString().trim().length() > 0){
+                    GetLocation();
 
                     feelsLike = Double.parseDouble(editTextFeelsLike.getText().toString());
                     windSpeed = Double.parseDouble(editTextWindSpeed.getText().toString());
@@ -105,6 +119,9 @@ public class RecordFragment extends Fragment implements SensorEventListener{
                     Log.i(TAG, "Record Item wind speed: " + recordItem.getWindSpeed());
                     Log.i(TAG, "Record Item pressure: " + recordItem.getLocalPressure());
                     Log.i(TAG, "Record Item temp: " + recordItem.getRecordedTemp());
+                    Log.i(TAG, "Longitude : " + longitude);
+                    Log.i(TAG, "Latitude : " + latitiude);
+
 
                 }else
                     Toast.makeText(getActivity(), "Please enter all fields", Toast.LENGTH_SHORT).show();
@@ -121,6 +138,8 @@ public class RecordFragment extends Fragment implements SensorEventListener{
                 spinnerWindDirection.setSelection(0);
             }
         });
+
+
         return view;
     }
 
@@ -156,5 +175,39 @@ public class RecordFragment extends Fragment implements SensorEventListener{
     public void onPause() {
         super.onPause();
         sensorManager.unregisterListener(this);
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+        Log.i(TAG,"Current Location: " + location.getLatitude() + ", " + location.getLongitude());
+        longitude = location.getLongitude();
+        latitiude = location.getLatitude();
+
+    }
+
+    @Override
+    public void onStatusChanged(String s, int i, Bundle bundle) {
+
+    }
+
+    @Override
+    public void onProviderEnabled(String s) {
+
+    }
+
+    @Override
+    public void onProviderDisabled(String s) {
+        Toast.makeText(getActivity(), "Please Enable GPS and Internet", Toast.LENGTH_SHORT).show();
+    }
+
+    private void GetLocation(){
+        try {
+            Log.i(TAG, "GetLocation called");
+            locationManager = (LocationManager)getContext().getSystemService(Context.LOCATION_SERVICE);
+            locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 5000, 5, this);
+        }
+        catch(SecurityException e) {
+            e.printStackTrace();
+        }
     }
 }
