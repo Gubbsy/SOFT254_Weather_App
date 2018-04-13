@@ -1,11 +1,20 @@
 package com.example.alee7.soft254_weather_app.frontend;
 
 
+import android.Manifest;
+import android.annotation.SuppressLint;
+import android.content.Context;
+import android.content.pm.PackageManager;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
+import android.nfc.Tag;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -30,11 +39,10 @@ import static android.content.Context.SENSOR_SERVICE;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class RecordFragment extends Fragment implements SensorEventListener{
+public class RecordFragment extends Fragment implements SensorEventListener, LocationListener {
 
     private RecordItem recordItem;
     private Boolean sensorHasRecorded = false;
-    private Boolean allFieldsFilled = true;
 
     private Button buttonSubmit, buttonClear;
 
@@ -47,7 +55,12 @@ public class RecordFragment extends Fragment implements SensorEventListener{
     private double feelsLike, windSpeed, pressure, recordedTemp = 0;
 
     private SensorManager sensorManager;
-    private Sensor pressureSensor, tempSensor;
+    private Sensor pressureSensor;
+
+    private LocationListener locLIstner;
+    private LocationManager locationManager;
+
+    private double lat, lon;
 
 
     @Override
@@ -68,11 +81,25 @@ public class RecordFragment extends Fragment implements SensorEventListener{
 
         //Assign spinner enums and onclick events
         spinnerWeatherType.setAdapter(new ArrayAdapter<WeatherType>(getActivity(), android.R.layout.simple_list_item_1, weatherType.values()));
-        spinnerWindDirection.setAdapter(new ArrayAdapter<WindDirection>(getActivity(),android.R.layout.simple_list_item_1,windDirection.values()));
-
+        spinnerWindDirection.setAdapter(new ArrayAdapter<WindDirection>(getActivity(), android.R.layout.simple_list_item_1, windDirection.values()));
 
         //Register Sensors
         sensorManager = (SensorManager) getActivity().getSystemService(SENSOR_SERVICE);
+
+        //Assign Location Manager
+        locationManager = (LocationManager) getContext().getSystemService(Context.LOCATION_SERVICE);
+
+        //Check permissions
+        if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(getActivity(),new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+        }
+        else{
+            Log.i(TAG, "Permissions enabled");
+        }
+
+        Location location = locationManager.getLastKnownLocation(locationManager.NETWORK_PROVIDER);
+        onLocationChanged(location);
 
         //Check if device has a Pressure Sensor. If not, return error message.
         if(sensorManager.getDefaultSensor(Sensor.TYPE_PRESSURE) != null) {
@@ -157,4 +184,27 @@ public class RecordFragment extends Fragment implements SensorEventListener{
         super.onPause();
         sensorManager.unregisterListener(this);
     }
+
+    @Override
+    public void onLocationChanged(Location location) {
+            lon = location.getLongitude();
+            lat=location.getLatitude();
+            Log.i(TAG, "Long: " + lon + "\nLat" + lat);
+    }
+
+    @Override
+    public void onStatusChanged(String s, int i, Bundle bundle) {
+
+    }
+
+    @Override
+    public void onProviderEnabled(String s) {
+
+    }
+
+    @Override
+    public void onProviderDisabled(String s) {
+
+    }
+
 }

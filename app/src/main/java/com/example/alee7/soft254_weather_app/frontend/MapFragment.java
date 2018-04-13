@@ -53,8 +53,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
             mMapView.onResume();
             mMapView.getMapAsync(this);
         }
-
-
     }
 
     @Override
