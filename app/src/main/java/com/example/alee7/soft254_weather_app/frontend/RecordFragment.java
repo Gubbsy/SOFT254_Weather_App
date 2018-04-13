@@ -35,8 +35,14 @@ import com.example.alee7.soft254_weather_app.enumerator.WeatherType;
 import com.example.alee7.soft254_weather_app.enumerator.WindDirection;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.GeoPoint;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import static android.content.ContentValues.TAG;
 import static android.content.Context.SENSOR_SERVICE;
@@ -68,8 +74,8 @@ public class RecordFragment extends Fragment implements SensorEventListener, Loc
     private double lat, lon;
 
     //Firebase
-    private FirebaseDatabase fbData = FirebaseDatabase.getInstance();
-    private DatabaseReference dbRef;
+    private FirebaseFirestore fbData = FirebaseFirestore.getInstance();
+    private CollectionReference dbRef = fbData.collection("weather-info");
 
 
     @Override
@@ -124,7 +130,7 @@ public class RecordFragment extends Fragment implements SensorEventListener, Loc
 
         //////////////////////////////////////FIRE BASE/////////////////////////////////////////////
 
-        dbRef = fbData.getReference("weather-info");
+        //dbRef =
 
 
 
@@ -136,8 +142,6 @@ public class RecordFragment extends Fragment implements SensorEventListener, Loc
             @Override
             public void onClick(View view) {
                 Log.i(TAG,"Submit Button Pressed");
-
-                Location geoLocation = new Location("New Record");
 
                 if(editTextFeelsLike.getText().toString().trim().length() > 0 && editTextWindSpeed.getText().toString().trim().length() > 0){
 
@@ -158,23 +162,22 @@ public class RecordFragment extends Fragment implements SensorEventListener, Loc
                     Log.i(TAG, "Record Item Lat: " + recordItem.getLatitude());
                     Log.i(TAG, "Record Item Lon: : " + recordItem.getLongitude());
 
-                    geoLocation.setLatitude(recordItem.getLatitude());
-                    geoLocation.setLongitude(recordItem.getLongitude());
+                    GeoPoint geoLocation = new GeoPoint(recordItem.getLatitude(), recordItem.getLongitude());
 
-                    DatabaseReference submitRef = dbRef.push();
-                    submitRef.child("location").setValue(geoLocation);
-                    submitRef.child("pressure").setValue(recordItem.getLocalPressure());
-                    submitRef.child("recorded-temp").setValue(recordItem.getRecordedTemp());
-                    submitRef.child("user-temp").setValue(recordItem.getFeelsLike());
-                    submitRef.child("weather-type").setValue(recordItem.getWeatherType().getPosition());
-                    submitRef.child("wind-direction").setValue(recordItem.getWindDirection().getPosition());
-                    submitRef.child("wind-speed").setValue(recordItem.getWindSpeed()).addOnCompleteListener(new OnCompleteListener<Void>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Void> task) {
-                            if (task.isSuccessful()){
-                                Intent intent = new Intent(getContext(),MainActivity.class);
-                                startActivity(intent);
-                            }
+                    Map<String, Object> submitRef = new HashMap<>();
+
+                    submitRef.put("location", geoLocation);
+                    submitRef.put("pressure", recordItem.getLocalPressure());
+                    submitRef.put("recorded-temp", recordItem.getRecordedTemp());
+                    submitRef.put("user-temp", recordItem.getFeelsLike());
+                    submitRef.put("weather-type", recordItem.getWeatherType().getPosition());
+                    submitRef.put("wind-direction", recordItem.getWindDirection().getPosition());
+                    submitRef.put("wind-speed", recordItem.getWindSpeed());
+
+                    dbRef.add(submitRef).addOnCompleteListener(task -> {
+                        if (task.isSuccessful()){
+                            Intent intent = new Intent(getContext(),MainActivity.class);
+                            startActivity(intent);
                         }
                     });
 
