@@ -4,6 +4,7 @@ package com.example.alee7.soft254_weather_app.frontend;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -14,6 +15,7 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.nfc.Tag;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -31,6 +33,10 @@ import com.example.alee7.soft254_weather_app.R;
 import com.example.alee7.soft254_weather_app.backend.RecordItem;
 import com.example.alee7.soft254_weather_app.enumerator.WeatherType;
 import com.example.alee7.soft254_weather_app.enumerator.WindDirection;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import static android.content.ContentValues.TAG;
 import static android.content.Context.SENSOR_SERVICE;
@@ -60,6 +66,10 @@ public class RecordFragment extends Fragment implements SensorEventListener, Loc
     private LocationManager locationManager;
 
     private double lat, lon;
+
+    //Firebase
+    private FirebaseDatabase fbData = FirebaseDatabase.getInstance();
+    private DatabaseReference dbRef;
 
 
     @Override
@@ -112,6 +122,12 @@ public class RecordFragment extends Fragment implements SensorEventListener, Loc
             textViewPressure.setText("Sensor not found.");
         }
 
+        //////////////////////////////////////FIRE BASE/////////////////////////////////////////////
+
+        dbRef = fbData.getReference("weather-info");
+
+
+
 
         ////////////////////////////// BUTTON CLICKS LISTENERS//////////////////////////////////////
 
@@ -120,6 +136,8 @@ public class RecordFragment extends Fragment implements SensorEventListener, Loc
             @Override
             public void onClick(View view) {
                 Log.i(TAG,"Submit Button Pressed");
+
+                Location geoLocation = new Location("New Record");
 
                 if(editTextFeelsLike.getText().toString().trim().length() > 0 && editTextWindSpeed.getText().toString().trim().length() > 0){
 
@@ -138,7 +156,28 @@ public class RecordFragment extends Fragment implements SensorEventListener, Loc
                     Log.i(TAG, "Record Item pressure: " + recordItem.getLocalPressure());
                     Log.i(TAG, "Record Item temp: " + recordItem.getRecordedTemp());
                     Log.i(TAG, "Record Item Lat: " + recordItem.getLatitude());
-                    Log.i(TAG, "Record Item temp: " + recordItem.getLongitude());
+                    Log.i(TAG, "Record Item Lon: : " + recordItem.getLongitude());
+
+                    geoLocation.setLatitude(recordItem.getLatitude());
+                    geoLocation.setLongitude(recordItem.getLongitude());
+
+                    DatabaseReference submitRef = dbRef.push();
+                    submitRef.child("location").setValue(geoLocation);
+                    submitRef.child("pressure").setValue(recordItem.getLocalPressure());
+                    submitRef.child("recorded-temp").setValue(recordItem.getRecordedTemp());
+                    submitRef.child("user-temp").setValue(recordItem.getFeelsLike());
+                    submitRef.child("weather-type").setValue(recordItem.getWeatherType().getPosition());
+                    submitRef.child("wind-direction").setValue(recordItem.getWindDirection().getPosition());
+                    submitRef.child("wind-speed").setValue(recordItem.getWindSpeed()).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if (task.isSuccessful()){
+                                Intent intent = new Intent(getContext(),MainActivity.class);
+                                startActivity(intent);
+                            }
+                        }
+                    });
+
                 }else
                     Toast.makeText(getActivity(), "Please enter all fields", Toast.LENGTH_SHORT).show();
             }

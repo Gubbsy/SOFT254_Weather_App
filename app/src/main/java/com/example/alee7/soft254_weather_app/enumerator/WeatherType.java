@@ -13,7 +13,7 @@ public enum WeatherType {
     private String weatherTypeString;
     private int position;
 
-    private WeatherType(String weatherTypeString, int position){
+    WeatherType(String weatherTypeString, int position){
         this.weatherTypeString = weatherTypeString;
         this.position = position;
     }
@@ -28,6 +28,10 @@ public enum WeatherType {
                 return wt;
         }
         return null;
+    }
+
+    public int getPosition() {
+        return position;
     }
 }
 
