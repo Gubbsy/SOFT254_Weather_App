@@ -1,11 +1,20 @@
 package com.example.alee7.soft254_weather_app.frontend;
 
 
+import android.Manifest;
+import android.annotation.SuppressLint;
+import android.content.Context;
+import android.content.pm.PackageManager;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
+import android.nfc.Tag;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -30,11 +39,10 @@ import static android.content.Context.SENSOR_SERVICE;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class RecordFragment extends Fragment implements SensorEventListener{
+public class RecordFragment extends Fragment implements SensorEventListener, LocationListener {
 
     private RecordItem recordItem;
     private Boolean sensorHasRecorded = false;
-    private Boolean allFieldsFilled = true;
 
     private Button buttonSubmit, buttonClear;
 
@@ -47,7 +55,11 @@ public class RecordFragment extends Fragment implements SensorEventListener{
     private double feelsLike, windSpeed, pressure, recordedTemp = 0;
 
     private SensorManager sensorManager;
-    private Sensor pressureSensor, tempSensor;
+    private Sensor pressureSensor;
+
+    private LocationManager locationManager;
+
+    private double lat, lon;
 
 
     @Override
@@ -68,8 +80,25 @@ public class RecordFragment extends Fragment implements SensorEventListener{
 
         //Assign spinner enums and onclick events
         spinnerWeatherType.setAdapter(new ArrayAdapter<WeatherType>(getActivity(), android.R.layout.simple_list_item_1, weatherType.values()));
-        spinnerWindDirection.setAdapter(new ArrayAdapter<WindDirection>(getActivity(),android.R.layout.simple_list_item_1,windDirection.values()));
+        spinnerWindDirection.setAdapter(new ArrayAdapter<WindDirection>(getActivity(), android.R.layout.simple_list_item_1, windDirection.values()));
 
+        //Check Permissions for sensor use
+        if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(getActivity(),new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+        }
+        else{
+            Log.i(TAG, "Permissions enabled");
+        }
+
+        ////////////////////////////////GPS SENSOR REGISTER/////////////////////////////////////////
+
+        //Assign Location Manager and Location
+        locationManager = (LocationManager) getContext().getSystemService(Context.LOCATION_SERVICE);
+        Location location = locationManager.getLastKnownLocation(locationManager.NETWORK_PROVIDER);
+        onLocationChanged(location);
+
+        ///////////////////////////////PRESSURE SENSOR REGISTER////////////////////////////////////
 
         //Register Sensors
         sensorManager = (SensorManager) getActivity().getSystemService(SENSOR_SERVICE);
@@ -82,6 +111,9 @@ public class RecordFragment extends Fragment implements SensorEventListener{
             Log.i(TAG, "Device has no Pressure Sensor built-in!");
             textViewPressure.setText("Sensor not found.");
         }
+
+
+        ////////////////////////////// BUTTON CLICKS LISTENERS//////////////////////////////////////
 
         //Create recordItem Object when button pressed
         buttonSubmit.setOnClickListener(new View.OnClickListener() {
@@ -97,7 +129,7 @@ public class RecordFragment extends Fragment implements SensorEventListener{
                     windDirection = WindDirection.getEnumByIndex(spinnerWindDirection.getSelectedItemPosition());
                     recordedTemp = 0.0;
 
-                    recordItem = new RecordItem(feelsLike, weatherType, windDirection, windSpeed, pressure, recordedTemp);
+                    recordItem = new RecordItem(feelsLike, weatherType, windDirection, windSpeed, pressure, recordedTemp, lat,lon);
 
                     Log.i(TAG, "Record Item feelsLike: " + recordItem.getFeelsLike());
                     Log.i(TAG, "Record Item weather type: " + recordItem.getWeatherType().toString());
@@ -105,7 +137,8 @@ public class RecordFragment extends Fragment implements SensorEventListener{
                     Log.i(TAG, "Record Item wind speed: " + recordItem.getWindSpeed());
                     Log.i(TAG, "Record Item pressure: " + recordItem.getLocalPressure());
                     Log.i(TAG, "Record Item temp: " + recordItem.getRecordedTemp());
-
+                    Log.i(TAG, "Record Item Lat: " + recordItem.getLatitude());
+                    Log.i(TAG, "Record Item temp: " + recordItem.getLongitude());
                 }else
                     Toast.makeText(getActivity(), "Please enter all fields", Toast.LENGTH_SHORT).show();
             }
@@ -124,6 +157,51 @@ public class RecordFragment extends Fragment implements SensorEventListener{
         return view;
     }
 
+
+    public RecordFragment() {
+        // Required empty public constructor
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        //sensorManager.registerListener(this, tempSensor, SensorManager.SENSOR_DELAY_NORMAL);
+        sensorManager.registerListener(this, pressureSensor, SensorManager.SENSOR_DELAY_NORMAL);
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        sensorManager.unregisterListener(this);
+    }
+
+
+    ///////////////////////////////LOCATION OVERRIDE METHODS////////////////////////////////////////
+
+    @Override
+    public void onLocationChanged(Location location) {
+            lat =location.getLatitude();
+            lon = location.getLongitude();
+            Log.i(TAG, "Long: " + lon + "\nLat" + lat);
+    }
+
+    @Override
+    public void onStatusChanged(String s, int i, Bundle bundle) {
+
+    }
+
+    @Override
+    public void onProviderEnabled(String s) {
+
+    }
+
+    @Override
+    public void onProviderDisabled(String s) {
+
+    }
+
+    /////////////////////////////////SENSOR OVERRIDE METHODS////////////////////////////////////////
+
     @Override
     public void onSensorChanged(SensorEvent event) {
         if(event.sensor.getType() == Sensor.TYPE_PRESSURE && !sensorHasRecorded)
@@ -140,21 +218,4 @@ public class RecordFragment extends Fragment implements SensorEventListener{
 
     }
 
-    public RecordFragment() {
-        // Required empty public constructor
-    }
-
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        //sensorManager.registerListener(this, tempSensor, SensorManager.SENSOR_DELAY_NORMAL);
-        sensorManager.registerListener(this, pressureSensor, SensorManager.SENSOR_DELAY_NORMAL);
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        sensorManager.unregisterListener(this);
-    }
 }
