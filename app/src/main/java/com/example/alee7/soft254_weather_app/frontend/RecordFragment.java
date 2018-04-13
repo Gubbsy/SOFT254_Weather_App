@@ -57,7 +57,6 @@ public class RecordFragment extends Fragment implements SensorEventListener, Loc
     private SensorManager sensorManager;
     private Sensor pressureSensor;
 
-    private LocationListener locLIstner;
     private LocationManager locationManager;
 
     private double lat, lon;
@@ -83,13 +82,7 @@ public class RecordFragment extends Fragment implements SensorEventListener, Loc
         spinnerWeatherType.setAdapter(new ArrayAdapter<WeatherType>(getActivity(), android.R.layout.simple_list_item_1, weatherType.values()));
         spinnerWindDirection.setAdapter(new ArrayAdapter<WindDirection>(getActivity(), android.R.layout.simple_list_item_1, windDirection.values()));
 
-        //Register Sensors
-        sensorManager = (SensorManager) getActivity().getSystemService(SENSOR_SERVICE);
-
-        //Assign Location Manager
-        locationManager = (LocationManager) getContext().getSystemService(Context.LOCATION_SERVICE);
-
-        //Check permissions
+        //Check Permissions for sensor use
         if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
                 ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(getActivity(),new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
@@ -98,8 +91,17 @@ public class RecordFragment extends Fragment implements SensorEventListener, Loc
             Log.i(TAG, "Permissions enabled");
         }
 
+        ////////////////////////////////GPS SENSOR REGISTER/////////////////////////////////////////
+
+        //Assign Location Manager and Location
+        locationManager = (LocationManager) getContext().getSystemService(Context.LOCATION_SERVICE);
         Location location = locationManager.getLastKnownLocation(locationManager.NETWORK_PROVIDER);
         onLocationChanged(location);
+
+        ///////////////////////////////PRESSURE SENSOR REGISTER////////////////////////////////////
+
+        //Register Sensors
+        sensorManager = (SensorManager) getActivity().getSystemService(SENSOR_SERVICE);
 
         //Check if device has a Pressure Sensor. If not, return error message.
         if(sensorManager.getDefaultSensor(Sensor.TYPE_PRESSURE) != null) {
@@ -109,6 +111,9 @@ public class RecordFragment extends Fragment implements SensorEventListener, Loc
             Log.i(TAG, "Device has no Pressure Sensor built-in!");
             textViewPressure.setText("Sensor not found.");
         }
+
+
+        ////////////////////////////// BUTTON CLICKS LISTENERS//////////////////////////////////////
 
         //Create recordItem Object when button pressed
         buttonSubmit.setOnClickListener(new View.OnClickListener() {
@@ -124,7 +129,7 @@ public class RecordFragment extends Fragment implements SensorEventListener, Loc
                     windDirection = WindDirection.getEnumByIndex(spinnerWindDirection.getSelectedItemPosition());
                     recordedTemp = 0.0;
 
-                    recordItem = new RecordItem(feelsLike, weatherType, windDirection, windSpeed, pressure, recordedTemp);
+                    recordItem = new RecordItem(feelsLike, weatherType, windDirection, windSpeed, pressure, recordedTemp, lat,lon);
 
                     Log.i(TAG, "Record Item feelsLike: " + recordItem.getFeelsLike());
                     Log.i(TAG, "Record Item weather type: " + recordItem.getWeatherType().toString());
@@ -132,7 +137,8 @@ public class RecordFragment extends Fragment implements SensorEventListener, Loc
                     Log.i(TAG, "Record Item wind speed: " + recordItem.getWindSpeed());
                     Log.i(TAG, "Record Item pressure: " + recordItem.getLocalPressure());
                     Log.i(TAG, "Record Item temp: " + recordItem.getRecordedTemp());
-
+                    Log.i(TAG, "Record Item Lat: " + recordItem.getLatitude());
+                    Log.i(TAG, "Record Item temp: " + recordItem.getLongitude());
                 }else
                     Toast.makeText(getActivity(), "Please enter all fields", Toast.LENGTH_SHORT).show();
             }
@@ -151,26 +157,10 @@ public class RecordFragment extends Fragment implements SensorEventListener, Loc
         return view;
     }
 
-    @Override
-    public void onSensorChanged(SensorEvent event) {
-        if(event.sensor.getType() == Sensor.TYPE_PRESSURE && !sensorHasRecorded)
-        {
-            pressure = event.values[0];
-            textViewPressure.setText(String.format("%.1f mbar", event.values[0]));
-            sensorHasRecorded = true;
-        }
-
-    }
-
-    @Override
-    public void onAccuracyChanged(Sensor sensor, int accuracy) {
-
-    }
 
     public RecordFragment() {
         // Required empty public constructor
     }
-
 
     @Override
     public void onResume() {
@@ -185,10 +175,13 @@ public class RecordFragment extends Fragment implements SensorEventListener, Loc
         sensorManager.unregisterListener(this);
     }
 
+
+    ///////////////////////////////LOCATION OVERRIDE METHODS////////////////////////////////////////
+
     @Override
     public void onLocationChanged(Location location) {
+            lat =location.getLatitude();
             lon = location.getLongitude();
-            lat=location.getLatitude();
             Log.i(TAG, "Long: " + lon + "\nLat" + lat);
     }
 
@@ -204,6 +197,24 @@ public class RecordFragment extends Fragment implements SensorEventListener, Loc
 
     @Override
     public void onProviderDisabled(String s) {
+
+    }
+
+    /////////////////////////////////SENSOR OVERRIDE METHODS////////////////////////////////////////
+
+    @Override
+    public void onSensorChanged(SensorEvent event) {
+        if(event.sensor.getType() == Sensor.TYPE_PRESSURE && !sensorHasRecorded)
+        {
+            pressure = event.values[0];
+            textViewPressure.setText(String.format("%.1f mbar", event.values[0]));
+            sensorHasRecorded = true;
+        }
+
+    }
+
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int accuracy) {
 
     }
 
