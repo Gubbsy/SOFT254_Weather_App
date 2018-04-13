@@ -64,7 +64,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         mGoogleMap = googleMap;
         googleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
 
-        googleMap.addMarker(new MarkerOptions().position(new LatLng(40.689247, -74.044502)).title("Stature of de Liberty freedom").snippet("Marker placed by Adam to mark"));
+        googleMap.addMarker(new MarkerOptions().position(new LatLng(40.689247, -74.044502)).title("Stature of de Liberty freedom").snippet("- Raining \n-37 Degrees"));
         CameraPosition statLib = CameraPosition.builder().target(new LatLng(40.689247, -74.044502)).zoom(16).tilt(45).build();
 
         googleMap.moveCamera(CameraUpdateFactory.newCameraPosition(statLib));
