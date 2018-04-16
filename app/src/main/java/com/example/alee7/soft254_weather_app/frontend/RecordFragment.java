@@ -122,17 +122,10 @@ public class RecordFragment extends Fragment implements SensorEventListener, Loc
         //Check if device has a Pressure Sensor. If not, return error message.
         if(sensorManager.getDefaultSensor(Sensor.TYPE_PRESSURE) != null) {
             pressureSensor = sensorManager.getDefaultSensor(Sensor.TYPE_PRESSURE);
-
         } else {
             Log.i(TAG, "Device has no Pressure Sensor built-in!");
             textViewPressure.setText("Sensor not found.");
         }
-
-        //////////////////////////////////////FIRE BASE/////////////////////////////////////////////
-
-        //dbRef =
-
-
 
 
         ////////////////////////////// BUTTON CLICKS LISTENERS//////////////////////////////////////
