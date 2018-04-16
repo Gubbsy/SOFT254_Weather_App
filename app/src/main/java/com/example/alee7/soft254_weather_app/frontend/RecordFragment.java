@@ -4,6 +4,7 @@ package com.example.alee7.soft254_weather_app.frontend;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -14,6 +15,7 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.nfc.Tag;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -31,6 +33,16 @@ import com.example.alee7.soft254_weather_app.R;
 import com.example.alee7.soft254_weather_app.backend.RecordItem;
 import com.example.alee7.soft254_weather_app.enumerator.WeatherType;
 import com.example.alee7.soft254_weather_app.enumerator.WindDirection;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.GeoPoint;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import static android.content.ContentValues.TAG;
 import static android.content.Context.SENSOR_SERVICE;
@@ -60,6 +72,10 @@ public class RecordFragment extends Fragment implements SensorEventListener, Loc
     private LocationManager locationManager;
 
     private double lat, lon;
+
+    //Firebase
+    private FirebaseFirestore fbData = FirebaseFirestore.getInstance();
+    private CollectionReference dbRef = fbData.collection("weather-info");
 
 
     @Override
@@ -112,6 +128,12 @@ public class RecordFragment extends Fragment implements SensorEventListener, Loc
             textViewPressure.setText("Sensor not found.");
         }
 
+        //////////////////////////////////////FIRE BASE/////////////////////////////////////////////
+
+        //dbRef =
+
+
+
 
         ////////////////////////////// BUTTON CLICKS LISTENERS//////////////////////////////////////
 
@@ -138,7 +160,27 @@ public class RecordFragment extends Fragment implements SensorEventListener, Loc
                     Log.i(TAG, "Record Item pressure: " + recordItem.getLocalPressure());
                     Log.i(TAG, "Record Item temp: " + recordItem.getRecordedTemp());
                     Log.i(TAG, "Record Item Lat: " + recordItem.getLatitude());
-                    Log.i(TAG, "Record Item temp: " + recordItem.getLongitude());
+                    Log.i(TAG, "Record Item Lon: : " + recordItem.getLongitude());
+
+                    GeoPoint geoLocation = new GeoPoint(recordItem.getLatitude(), recordItem.getLongitude());
+
+                    Map<String, Object> submitRef = new HashMap<>();
+
+                    submitRef.put("location", geoLocation);
+                    submitRef.put("pressure", recordItem.getLocalPressure());
+                    submitRef.put("recorded-temp", recordItem.getRecordedTemp());
+                    submitRef.put("user-temp", recordItem.getFeelsLike());
+                    submitRef.put("weather-type", recordItem.getWeatherType().getPosition());
+                    submitRef.put("wind-direction", recordItem.getWindDirection().getPosition());
+                    submitRef.put("wind-speed", recordItem.getWindSpeed());
+
+                    dbRef.add(submitRef).addOnCompleteListener(task -> {
+                        if (task.isSuccessful()){
+                            Intent intent = new Intent(getContext(),MainActivity.class);
+                            startActivity(intent);
+                        }
+                    });
+
                 }else
                     Toast.makeText(getActivity(), "Please enter all fields", Toast.LENGTH_SHORT).show();
             }

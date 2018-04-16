@@ -29,4 +29,8 @@ public enum WindDirection {
         }
         return null;
     }
+
+    public int getPosition() {
+        return position;
+    }
 }
