@@ -16,6 +16,7 @@ import android.location.LocationManager;
 import android.nfc.Tag;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -51,7 +52,7 @@ import static android.content.Context.SENSOR_SERVICE;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class RecordFragment extends Fragment implements SensorEventListener, LocationListener {
+public class RecordFragment extends Fragment implements SensorEventListener, LocationListener, View.OnClickListener {
 
     private RecordItem recordItem;
     private Boolean sensorHasRecorded = false;
@@ -94,6 +95,9 @@ public class RecordFragment extends Fragment implements SensorEventListener, Loc
         textViewPressure = view.findViewById(R.id.pressure_recorded);
         textViewRecordedTemp = view.findViewById(R.id.temp_recorded);
 
+        buttonSubmit.setOnClickListener(this);
+        buttonClear.setOnClickListener(this);
+
         //Assign spinner enums and onclick events
         spinnerWeatherType.setAdapter(new ArrayAdapter<WeatherType>(getActivity(), R.layout.spinner, weatherType.values()));
         spinnerWindDirection.setAdapter(new ArrayAdapter<WindDirection>(getActivity(), R.layout.spinner, windDirection.values()));
@@ -127,68 +131,6 @@ public class RecordFragment extends Fragment implements SensorEventListener, Loc
             textViewPressure.setText("Sensor not found.");
         }
 
-
-        ////////////////////////////// BUTTON CLICKS LISTENERS//////////////////////////////////////
-
-        //Create recordItem Object when button pressed
-        buttonSubmit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Log.i(TAG,"Submit Button Pressed");
-
-                if(editTextFeelsLike.getText().toString().trim().length() > 0 && editTextWindSpeed.getText().toString().trim().length() > 0){
-
-                    feelsLike = Double.parseDouble(editTextFeelsLike.getText().toString());
-                    windSpeed = Double.parseDouble(editTextWindSpeed.getText().toString());
-                    weatherType = WeatherType.getEnumByIndex(spinnerWeatherType.getSelectedItemPosition());
-                    windDirection = WindDirection.getEnumByIndex(spinnerWindDirection.getSelectedItemPosition());
-                    recordedTemp = 0.0;
-
-                    recordItem = new RecordItem(feelsLike, weatherType, windDirection, windSpeed, pressure, recordedTemp, lat,lon);
-
-                    Log.i(TAG, "Record Item feelsLike: " + recordItem.getFeelsLike());
-                    Log.i(TAG, "Record Item weather type: " + recordItem.getWeatherType().toString());
-                    Log.i(TAG, "Record Item wind Direction: " + recordItem.getWindDirection().toString());
-                    Log.i(TAG, "Record Item wind speed: " + recordItem.getWindSpeed());
-                    Log.i(TAG, "Record Item pressure: " + recordItem.getLocalPressure());
-                    Log.i(TAG, "Record Item temp: " + recordItem.getRecordedTemp());
-                    Log.i(TAG, "Record Item Lat: " + recordItem.getLatitude());
-                    Log.i(TAG, "Record Item Lon: : " + recordItem.getLongitude());
-
-                    GeoPoint geoLocation = new GeoPoint(recordItem.getLatitude(), recordItem.getLongitude());
-
-                    Map<String, Object> submitRef = new HashMap<>();
-
-                    submitRef.put("location", geoLocation);
-                    submitRef.put("pressure", recordItem.getLocalPressure());
-                    submitRef.put("recorded-temp", recordItem.getRecordedTemp());
-                    submitRef.put("user-temp", recordItem.getFeelsLike());
-                    submitRef.put("weather-type", recordItem.getWeatherType().getPosition());
-                    submitRef.put("wind-direction", recordItem.getWindDirection().getPosition());
-                    submitRef.put("wind-speed", recordItem.getWindSpeed());
-
-                    dbRef.add(submitRef).addOnCompleteListener(task -> {
-                        if (task.isSuccessful()){
-                            Intent intent = new Intent(getContext(),MainActivity.class);
-                            startActivity(intent);
-                        }
-                    });
-
-                }else
-                    Toast.makeText(getActivity(), "Please enter all fields", Toast.LENGTH_SHORT).show();
-            }
-        });
-
-        buttonClear.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                editTextFeelsLike.setText("");
-                editTextWindSpeed.setText("");
-                sensorHasRecorded = false;
-                spinnerWeatherType.setSelection(0);
-                spinnerWindDirection.setSelection(0);
-            }
-        });
         return view;
     }
 
@@ -253,4 +195,63 @@ public class RecordFragment extends Fragment implements SensorEventListener, Loc
 
     }
 
+    @Override
+    public void onClick(View v) {
+        int id = v.getId();
+        switch(id){
+            case R.id.button_submit:
+                Log.i(TAG,"Submit Button Pressed");
+
+                if(editTextFeelsLike.getText().toString().trim().length() > 0 && editTextWindSpeed.getText().toString().trim().length() > 0){
+
+                    feelsLike = Double.parseDouble(editTextFeelsLike.getText().toString());
+                    windSpeed = Double.parseDouble(editTextWindSpeed.getText().toString());
+                    weatherType = WeatherType.getEnumByIndex(spinnerWeatherType.getSelectedItemPosition());
+                    windDirection = WindDirection.getEnumByIndex(spinnerWindDirection.getSelectedItemPosition());
+                    recordedTemp = 0.0;
+
+                    recordItem = new RecordItem(feelsLike, weatherType, windDirection, windSpeed, pressure, recordedTemp, lat,lon);
+
+                    Log.i(TAG, "Record Item feelsLike: " + recordItem.getFeelsLike());
+                    Log.i(TAG, "Record Item weather type: " + recordItem.getWeatherType().toString());
+                    Log.i(TAG, "Record Item wind Direction: " + recordItem.getWindDirection().toString());
+                    Log.i(TAG, "Record Item wind speed: " + recordItem.getWindSpeed());
+                    Log.i(TAG, "Record Item pressure: " + recordItem.getLocalPressure());
+                    Log.i(TAG, "Record Item temp: " + recordItem.getRecordedTemp());
+                    Log.i(TAG, "Record Item Lat: " + recordItem.getLatitude());
+                    Log.i(TAG, "Record Item Lon: : " + recordItem.getLongitude());
+
+                    GeoPoint geoLocation = new GeoPoint(recordItem.getLatitude(), recordItem.getLongitude());
+
+                    Map<String, Object> submitRef = new HashMap<>();
+
+                    submitRef.put("location", geoLocation);
+                    submitRef.put("pressure", recordItem.getLocalPressure());
+                    submitRef.put("recorded-temp", recordItem.getRecordedTemp());
+                    submitRef.put("user-temp", recordItem.getFeelsLike());
+                    submitRef.put("weather-type", recordItem.getWeatherType().getPosition());
+                    submitRef.put("wind-direction", recordItem.getWindDirection().getPosition());
+                    submitRef.put("wind-speed", recordItem.getWindSpeed());
+
+                    dbRef.add(submitRef).addOnCompleteListener(task -> {
+                        if (task.isSuccessful()){
+                            Intent intent = new Intent(getContext(),MainActivity.class);
+                            startActivity(intent);
+                        }
+                    });
+
+                }else
+                    Toast.makeText(getActivity(), "Please enter all fields", Toast.LENGTH_SHORT).show();
+                break;
+
+            case R.id.button_clear:
+                editTextFeelsLike.setText("");
+                editTextWindSpeed.setText("");
+                sensorHasRecorded = false;
+                spinnerWeatherType.setSelection(0);
+                spinnerWindDirection.setSelection(0);
+                Snackbar.make(v, R.string.InputCleared, Snackbar.LENGTH_SHORT).show();
+                break;
+        }
+    }
 }
