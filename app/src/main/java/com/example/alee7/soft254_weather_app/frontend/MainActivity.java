@@ -40,7 +40,7 @@ public class MainActivity extends AppCompatActivity implements BottomNavigationV
         //recordFragment = new RecordFragment();
         mapFragment = new MapFragment();
         recordFragment = new RecordFragment();
-
+        setTitle("Something About Weather");
         setFragment(recordFragment);    //Set the fragment to recordFragment when the app starts
 
     }
