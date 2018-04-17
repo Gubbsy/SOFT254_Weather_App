@@ -95,8 +95,8 @@ public class RecordFragment extends Fragment implements SensorEventListener, Loc
         textViewRecordedTemp = view.findViewById(R.id.temp_recorded);
 
         //Assign spinner enums and onclick events
-        spinnerWeatherType.setAdapter(new ArrayAdapter<WeatherType>(getActivity(), android.R.layout.simple_list_item_1, weatherType.values()));
-        spinnerWindDirection.setAdapter(new ArrayAdapter<WindDirection>(getActivity(), android.R.layout.simple_list_item_1, windDirection.values()));
+        spinnerWeatherType.setAdapter(new ArrayAdapter<WeatherType>(getActivity(), R.layout.spinner, weatherType.values()));
+        spinnerWindDirection.setAdapter(new ArrayAdapter<WindDirection>(getActivity(), R.layout.spinner, windDirection.values()));
 
         //Check Permissions for sensor use
         if (ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&

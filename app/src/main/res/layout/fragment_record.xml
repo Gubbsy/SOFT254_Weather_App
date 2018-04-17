@@ -17,7 +17,7 @@
           android:fontFamily="@font/queenofclub"
           android:text="@string/record_instructions"
           android:textAlignment="center"
-          android:textSize="20dp"
+          android:textSize="24sp"
           android:textStyle="bold" />
 
       <TextView
@@ -90,13 +90,14 @@
           android:id="@+id/feels_like_editText"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
-          android:layout_alignParentEnd="true"
           android:layout_alignBottom="@+id/feels_like_text"
+          android:layout_alignParentEnd="true"
           android:layout_marginStart="18dp"
           android:layout_toEndOf="@+id/recorded_temp_text"
-          android:textSize="20dp"
+          android:hint="Enter the temperature here"
           android:inputType="number"
-          android:textAlignment="center"/>
+          android:textAlignment="center"
+          android:textSize="20dp" />
 
       <Spinner
           android:id="@+id/weather_type_spinner"
@@ -118,13 +119,14 @@
           android:id="@+id/wind_speed_editText"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
-          android:layout_alignParentEnd="true"
           android:layout_alignBottom="@+id/wind_speed_text"
+          android:layout_alignParentEnd="true"
           android:layout_marginStart="18dp"
           android:layout_toEndOf="@+id/recorded_temp_text"
-          android:textSize="20dp"
+          android:hint="Enter the wind speed here"
           android:inputType="number"
-          android:textAlignment="center"/>
+          android:textAlignment="center"
+          android:textSize="20dp" />
 
       <TextView
           android:id="@+id/pressure_recorded"
@@ -157,6 +159,7 @@
           android:layout_below="@id/temp_recorded"
           android:layout_marginTop="20dp"
           android:background="@android:color/background_dark"
+          android:fontFamily="@font/queenofclub"
           android:text="@string/submit"
           android:textColor="@android:color/background_light"
           android:textSize="20dp" />
@@ -168,6 +171,7 @@
           android:layout_below="@id/button_submit"
           android:layout_marginTop="10dp"
           android:background="@android:color/background_dark"
+          android:fontFamily="@font/queenofclub"
           android:text="@string/clear"
           android:textColor="@android:color/background_light"
           android:textSize="20dp" />
