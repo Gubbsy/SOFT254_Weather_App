@@ -176,7 +176,7 @@ public class RecordFragment extends Fragment implements SensorEventListener, Loc
 
                     dbRef.add(submitRef).addOnCompleteListener(task -> {
                         if (task.isSuccessful()){
-                            Intent intent = new Intent(getContext(),MainActivity.class);
+                            Intent intent = new Intent(getContext(),LoggedInActivity.class);
                             startActivity(intent);
                         }
                     });
