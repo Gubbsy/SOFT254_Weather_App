@@ -8,7 +8,16 @@
 
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        >
+
+        <ImageView
+            android:id="@+id/backgroundImage"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"
+            android:src="@drawable/bg_mid"
+            app:layout_constraintBottom_toBottomOf="parent" />
 
         <TextView
             android:id="@+id/record_instructions"
@@ -17,7 +26,7 @@
             android:layout_marginTop="16dp"
             android:text="@string/record_instructions"
             android:textAlignment="center"
-            android:textColor="@android:color/black"
+            android:textColor="@android:color/white"
             android:textSize="24sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -30,6 +39,7 @@
             android:layout_marginStart="20dp"
             android:layout_marginTop="20dp"
             android:text="@string/feels_like"
+            android:textColor="@android:color/white"
             android:textSize="24sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/record_instructions" />
@@ -41,6 +51,7 @@
             android:layout_marginStart="20dp"
             android:layout_marginTop="16dp"
             android:text="@string/weather_type"
+            android:textColor="@android:color/white"
             android:textSize="24sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/feels_like_text" />
@@ -52,6 +63,7 @@
             android:layout_marginStart="20dp"
             android:layout_marginTop="16dp"
             android:text="@string/wind_direction"
+            android:textColor="@android:color/white"
             android:textSize="24sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/weather_type_text" />
@@ -63,6 +75,7 @@
             android:layout_marginStart="20dp"
             android:layout_marginTop="16dp"
             android:text="@string/wind_speed"
+            android:textColor="@android:color/white"
             android:textSize="24sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/wind_direction_text" />
@@ -74,6 +87,7 @@
             android:layout_marginStart="20dp"
             android:layout_marginTop="16dp"
             android:text="@string/pressure"
+            android:textColor="@android:color/white"
             android:textSize="24sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/wind_speed_text" />
@@ -85,6 +99,7 @@
             android:layout_marginStart="20dp"
             android:layout_marginTop="16dp"
             android:text="@string/recorded_temp"
+            android:textColor="@android:color/white"
             android:textSize="24sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/pressure_text" />
@@ -108,6 +123,9 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="20dp"
             android:layout_marginTop="8dp"
+            android:gravity="center"
+            android:minWidth="100dp"
+            android:popupBackground="@android:color/black"
             android:textAlignment="center"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/feels_like_text" />
@@ -118,6 +136,9 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="20dp"
             android:layout_marginTop="8dp"
+            android:gravity="center"
+            android:minWidth="100dp"
+            android:popupBackground="@android:color/black"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/weather_type_text" />
 
@@ -142,6 +163,7 @@
             android:layout_marginTop="16dp"
             android:text="0"
             android:textAlignment="center"
+            android:textColor="@android:color/white"
             android:textSize="24sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/wind_speed_text" />
@@ -154,6 +176,7 @@
             android:layout_marginTop="16dp"
             android:text="0"
             android:textAlignment="center"
+            android:textColor="@android:color/white"
             android:textSize="24sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/pressure_recorded" />
