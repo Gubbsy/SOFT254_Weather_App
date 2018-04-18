@@ -3,6 +3,7 @@ package com.example.alee7.soft254_weather_app.frontend;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
+import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -109,10 +110,16 @@ public class RecordFragment extends Fragment implements SensorEventListener, Loc
 
         ////////////////////////////////GPS SENSOR REGISTER/////////////////////////////////////////
 
-        //Assign Location Manager and Location
-        locationManager = (LocationManager) getContext().getSystemService(Context.LOCATION_SERVICE);
-        Location location = locationManager.getLastKnownLocation(locationManager.NETWORK_PROVIDER);
-        onLocationChanged(location);
+        try{
+            //Assign Location Manager and Location
+            locationManager = (LocationManager) getContext().getSystemService(Context.LOCATION_SERVICE);
+            Location location = locationManager.getLastKnownLocation(locationManager.NETWORK_PROVIDER);
+            onLocationChanged(location);
+        } catch(SecurityException e){
+            Toast.makeText(getActivity(), "Please Enable Location Permissions", Toast.LENGTH_SHORT).show();
+            getActivity().finish();
+        }
+
 
         ///////////////////////////////PRESSURE SENSOR REGISTER////////////////////////////////////
 
