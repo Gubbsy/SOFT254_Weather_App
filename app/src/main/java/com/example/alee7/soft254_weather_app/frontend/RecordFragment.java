@@ -202,7 +202,7 @@ public class RecordFragment extends Fragment implements SensorEventListener, Loc
             case R.id.button_submit:
                 Log.i(TAG,"Submit Button Pressed");
 
-                if(editTextFeelsLike.getText().toString().trim().length() > 0 && editTextWindSpeed.getText().toString().trim().length() > 0){
+                if(editTextFeelsLike.getText().toString().trim().length() > 0 && editTextWindSpeed.getText().toString().trim().length() > 0 && (Double.parseDouble(editTextFeelsLike.getText().toString()) <= 100 || Double.parseDouble(editTextFeelsLike.getText().toString()) >= -100)){
 
                     feelsLike = Double.parseDouble(editTextFeelsLike.getText().toString());
                     windSpeed = Double.parseDouble(editTextWindSpeed.getText().toString());
@@ -244,7 +244,7 @@ public class RecordFragment extends Fragment implements SensorEventListener, Loc
                     });
 
                 }else
-                    Toast.makeText(getActivity(), "Please enter all fields", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), "Please enter all fields correctly", Toast.LENGTH_SHORT).show();
                 break;
 
             case R.id.button_clear:
