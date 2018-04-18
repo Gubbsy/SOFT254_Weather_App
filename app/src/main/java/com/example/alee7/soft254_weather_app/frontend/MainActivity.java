@@ -70,7 +70,7 @@ public class MainActivity extends AppCompatActivity  {
 
         ProgressDialog progressDialog = ProgressDialog.show(MainActivity.this, "Please wait...", "Proccessing.... ", true);
 
-        (firebaseAuth.signInWithEmailAndPassword(textEmail.getText().toString(), textPsw.getText().toString()))
+        (firebaseAuth.signInWithEmailAndPassword(textEmail.getText().toString().trim(), textPsw.getText().toString().trim()))
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
@@ -91,7 +91,7 @@ public class MainActivity extends AppCompatActivity  {
     public void Register(){
         ProgressDialog progressDialog = ProgressDialog.show(MainActivity.this, "Please wait...", "Proccessing.... ", true);
 
-        (firebaseAuth.createUserWithEmailAndPassword(textEmail.getText().toString(), textPsw.getText().toString()))
+        (firebaseAuth.createUserWithEmailAndPassword(textEmail.getText().toString().trim(), textPsw.getText().toString().trim()))
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
