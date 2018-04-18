@@ -23,4 +23,5 @@
     <string name="buttonSubmitText">Submit</string>
     <string name="buttonClearText">Clear Input</string>
     <string name="InputCleared">Input Cleared!</string>
+    <string name="InputSent">Data Sent! Thank you!</string>
 </resources>

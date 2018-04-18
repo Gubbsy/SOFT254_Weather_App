@@ -233,6 +233,9 @@ public class RecordFragment extends Fragment implements SensorEventListener, Loc
                     submitRef.put("wind-direction", recordItem.getWindDirection().getPosition());
                     submitRef.put("wind-speed", recordItem.getWindSpeed());
 
+                    //Pop up a 'Snackbar' to notify the user
+                    Snackbar.make(v, R.string.InputSent, Snackbar.LENGTH_SHORT).show();
+
                     dbRef.add(submitRef).addOnCompleteListener(task -> {
                         if (task.isSuccessful()){
                             Intent intent = new Intent(getContext(),MainActivity.class);
@@ -250,6 +253,8 @@ public class RecordFragment extends Fragment implements SensorEventListener, Loc
                 sensorHasRecorded = false;
                 spinnerWeatherType.setSelection(0);
                 spinnerWindDirection.setSelection(0);
+
+                //Pop up a 'Snackbar' to notify the user
                 Snackbar.make(v, R.string.InputCleared, Snackbar.LENGTH_SHORT).show();
                 break;
         }
