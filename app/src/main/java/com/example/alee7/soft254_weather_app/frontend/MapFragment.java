@@ -4,10 +4,14 @@ package com.example.alee7.soft254_weather_app.frontend;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.location.Address;
+import android.location.Geocoder;
+import android.nfc.Tag;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -30,12 +34,16 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.GeoPoint;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
 
 
 /**
@@ -84,7 +92,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         mGoogleMap = googleMap;
         googleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
 
-       dbRef.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+       dbRef.whereGreaterThan("postTime", FieldValue.serverTimestamp()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
            @Override
            public void onComplete(@NonNull Task<QuerySnapshot> task) {
                if(task.isSuccessful()){
@@ -113,12 +121,15 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
 
         GeoPoint geoPoint = (GeoPoint) recordItem.get("location");
 
-        googleMap.addMarker(new MarkerOptions().position(new LatLng(geoPoint.getLatitude(), geoPoint.getLongitude())).title("Stature of de Liberty freedom").snippet(
+        String address = GetAdressFromLocation(geoPoint);
+
+        googleMap.addMarker(new MarkerOptions().position(new LatLng(geoPoint.getLatitude(), geoPoint.getLongitude())).title(address).snippet(
                 "Weather Type: " + WeatherType.getEnumByIndex(safeLongToInt((long)recordItem.get("weather-type"))).toString() +
                         "\nFeels like: " + recordItem.get("user-temp") + "°C" +
                         "\nWind Direction: " + WindDirection.getEnumByIndex(safeLongToInt((long)recordItem.get("wind-direction"))).toString() +
                         "\nWind Speed: " + recordItem.get("wind-speed") + "mph" +
-                        "\nLocal Pressure: " + recordItem.get("pressure")));
+                        "\nLocal Pressure: " + recordItem.get("pressure") +
+                        "\nTime Recorded: " + recordItem.get("postTime")));
 
         googleMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
             @Override
@@ -148,5 +159,29 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                 return info;
             }
         });
+    }
+
+    public String GetAdressFromLocation(GeoPoint geoPoint){
+        Geocoder geocoder = new Geocoder(getContext(), Locale.getDefault());
+
+        try {
+            List<Address> addresses = geocoder.getFromLocation(geoPoint.getLatitude(),geoPoint.getLongitude(), 1);
+
+            if (addresses != null) {
+                Address returnedAddress = addresses.get(0);
+                StringBuilder strReturnedAddress = new StringBuilder();
+                for (int i = 0; i < returnedAddress.getMaxAddressLineIndex(); i++) {
+                    strReturnedAddress.append(returnedAddress.getAddressLine(i)).append("");
+                }
+                return (strReturnedAddress.toString());
+            }
+            else {
+                return ("No Address returned!");
+            }
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            return("Canont get Address!");
+        }
     }
 }

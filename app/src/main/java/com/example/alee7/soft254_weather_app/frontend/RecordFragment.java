@@ -36,8 +36,10 @@ import com.example.alee7.soft254_weather_app.enumerator.WeatherType;
 import com.example.alee7.soft254_weather_app.enumerator.WindDirection;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.GeoPoint;
 
@@ -77,6 +79,7 @@ public class RecordFragment extends Fragment implements SensorEventListener, Loc
     //Firebase
     private FirebaseFirestore fbData = FirebaseFirestore.getInstance();
     private CollectionReference dbRef = fbData.collection("weather-info");
+    private FirebaseAuth fbAuth = FirebaseAuth.getInstance();
 
 
     @Override
@@ -169,11 +172,16 @@ public class RecordFragment extends Fragment implements SensorEventListener, Loc
                     submitRef.put("weather-type", recordItem.getWeatherType().getPosition());
                     submitRef.put("wind-direction", recordItem.getWindDirection().getPosition());
                     submitRef.put("wind-speed", recordItem.getWindSpeed());
+                    submitRef.put("posterID", fbAuth.getUid());
+                    submitRef.put("postTime", FieldValue.serverTimestamp());
 
                     dbRef.add(submitRef).addOnCompleteListener(task -> {
                         if (task.isSuccessful()){
                             Intent intent = new Intent(getContext(),LoggedInActivity.class);
                             startActivity(intent);
+                        } else {
+                            Toast.makeText(getContext(), task.getException().toString(), Toast.LENGTH_LONG).show();
+                            Log.i(getTag(), "Failed");
                         }
                     });
 
