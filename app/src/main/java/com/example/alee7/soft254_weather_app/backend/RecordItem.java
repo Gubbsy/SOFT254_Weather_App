@@ -7,7 +7,7 @@ public class RecordItem {
     private double feelsLike;
     private WeatherType weatherType;
     private WindDirection windDirection;
-    private double windSpeed, localPressure,recordedTemp;
+    private double windSpeed, localPressure;
     private double latitude, longitude;
 
 
@@ -16,13 +16,12 @@ public class RecordItem {
     }
 
     //Constructor
-    public RecordItem(double feelsLike, WeatherType weatherType, WindDirection windDirection, double windSpeed, double localPressure, double recordedTemp, double latitude, double longitude) {
+    public RecordItem(double feelsLike, WeatherType weatherType, WindDirection windDirection, double windSpeed, double localPressure, double latitude, double longitude) {
         this.feelsLike = feelsLike;
         this.weatherType = weatherType;
         this.windDirection = windDirection;
         this.windSpeed = windSpeed;
         this.localPressure = localPressure;
-        this.recordedTemp = recordedTemp;
         this.latitude = latitude;
         this.longitude = longitude;
     }
@@ -48,11 +47,7 @@ public class RecordItem {
     public double getLocalPressure() {
         return localPressure;
     }
-
-    public double getRecordedTemp() {
-        return recordedTemp;
-    }
-
+    
     public double getLatitude() {
         return latitude;
     }

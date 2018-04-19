@@ -118,8 +118,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                         "\nFeels like: " + recordItem.get("user-temp") + "°C" +
                         "\nWind Direction: " + WindDirection.getEnumByIndex(safeLongToInt((long)recordItem.get("wind-direction"))).toString() +
                         "\nWind Speed: " + recordItem.get("wind-speed") + "mph" +
-                        "\nLocal Pressure: " + recordItem.get("pressure") +
-                        "\nRecorded Temp: " + recordItem.get("recorded-temp")));
+                        "\nLocal Pressure: " + recordItem.get("pressure")));
 
         googleMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
             @Override

@@ -65,7 +65,7 @@ public class RecordFragment extends Fragment implements SensorEventListener, Loc
 
     private WeatherType weatherType = null;
     private WindDirection windDirection = null;
-    private double feelsLike, windSpeed, pressure, recordedTemp = 0;
+    private double feelsLike, windSpeed, pressure = 0;
 
     private SensorManager sensorManager;
     private Sensor pressureSensor;
@@ -93,7 +93,6 @@ public class RecordFragment extends Fragment implements SensorEventListener, Loc
         spinnerWeatherType = view.findViewById(R.id.weather_type_spinner);
         spinnerWindDirection = view.findViewById(R.id.wind_direction_spinner);
         textViewPressure = view.findViewById(R.id.pressure_recorded);
-        textViewRecordedTemp = view.findViewById(R.id.temp_recorded);
 
         //Assign spinner enums and onclick events
         spinnerWeatherType.setAdapter(new ArrayAdapter<WeatherType>(getActivity(), android.R.layout.simple_list_item_1, weatherType.values()));
@@ -149,16 +148,14 @@ public class RecordFragment extends Fragment implements SensorEventListener, Loc
                     windSpeed = Double.parseDouble(editTextWindSpeed.getText().toString());
                     weatherType = WeatherType.getEnumByIndex(spinnerWeatherType.getSelectedItemPosition());
                     windDirection = WindDirection.getEnumByIndex(spinnerWindDirection.getSelectedItemPosition());
-                    recordedTemp = 0.0;
 
-                    recordItem = new RecordItem(feelsLike, weatherType, windDirection, windSpeed, pressure, recordedTemp, lat,lon);
+                    recordItem = new RecordItem(feelsLike, weatherType, windDirection, windSpeed, pressure, lat,lon);
 
                     Log.i(TAG, "Record Item feelsLike: " + recordItem.getFeelsLike());
                     Log.i(TAG, "Record Item weather type: " + recordItem.getWeatherType().toString());
                     Log.i(TAG, "Record Item wind Direction: " + recordItem.getWindDirection().toString());
                     Log.i(TAG, "Record Item wind speed: " + recordItem.getWindSpeed());
                     Log.i(TAG, "Record Item pressure: " + recordItem.getLocalPressure());
-                    Log.i(TAG, "Record Item temp: " + recordItem.getRecordedTemp());
                     Log.i(TAG, "Record Item Lat: " + recordItem.getLatitude());
                     Log.i(TAG, "Record Item Lon: : " + recordItem.getLongitude());
 
@@ -168,7 +165,6 @@ public class RecordFragment extends Fragment implements SensorEventListener, Loc
 
                     submitRef.put("location", geoLocation);
                     submitRef.put("pressure", recordItem.getLocalPressure());
-                    submitRef.put("recorded-temp", recordItem.getRecordedTemp());
                     submitRef.put("user-temp", recordItem.getFeelsLike());
                     submitRef.put("weather-type", recordItem.getWeatherType().getPosition());
                     submitRef.put("wind-direction", recordItem.getWindDirection().getPosition());
