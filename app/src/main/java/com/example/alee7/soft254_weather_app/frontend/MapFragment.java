@@ -41,6 +41,7 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.io.IOException;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -92,7 +93,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         mGoogleMap = googleMap;
         googleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
 
-       dbRef.whereGreaterThan("postTime", FieldValue.serverTimestamp()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+        Calendar cutoffTime = Calendar.getInstance();
+        cutoffTime.add(Calendar.HOUR, -12);
+
+       dbRef.whereGreaterThan("postTime", cutoffTime.getTime()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
            @Override
            public void onComplete(@NonNull Task<QuerySnapshot> task) {
                if(task.isSuccessful()){
