@@ -44,6 +44,8 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.GeoPoint;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -87,6 +89,8 @@ public class RecordFragment extends Fragment implements SensorEventListener, Loc
 
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_record, container, false);
+
+        getActivity().setTitle(R.string.recordTitle);
 
         //Register UI Components
         buttonSubmit = view.findViewById(R.id.button_submit);
@@ -173,7 +177,9 @@ public class RecordFragment extends Fragment implements SensorEventListener, Loc
                     submitRef.put("wind-direction", recordItem.getWindDirection().getPosition());
                     submitRef.put("wind-speed", recordItem.getWindSpeed());
                     submitRef.put("posterID", fbAuth.getUid());
-                    submitRef.put("postTime", FieldValue.serverTimestamp());
+                    Calendar tempTest = Calendar.getInstance();
+                    tempTest.add(Calendar.HOUR, -15);
+                    submitRef.put("postTime", Calendar.getInstance().getTime());
 
                     dbRef.add(submitRef).addOnCompleteListener(task -> {
                         if (task.isSuccessful()){

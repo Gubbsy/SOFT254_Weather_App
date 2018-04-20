@@ -39,9 +39,11 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.GeoPoint;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.ServerTimestamp;
 
 import java.io.IOException;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -83,9 +85,12 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         mView = inflater.inflate(R.layout.fragment_map, container, false);
+        getActivity().setTitle(R.string.mapTitle);
         context = getActivity();
         return mView;
     }
+
+
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
@@ -93,10 +98,11 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         mGoogleMap = googleMap;
         googleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
 
-        Calendar cutoffTime = Calendar.getInstance();
-        cutoffTime.add(Calendar.HOUR, -12);
+        Calendar testCal = Calendar.getInstance();
+        testCal.add(Calendar.HOUR, 12);
+        Date date = testCal.getTime();
 
-       dbRef.whereGreaterThan("postTime", cutoffTime.getTime()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+       dbRef.whereLessThanOrEqualTo("postTime", date).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
            @Override
            public void onComplete(@NonNull Task<QuerySnapshot> task) {
                if(task.isSuccessful()){

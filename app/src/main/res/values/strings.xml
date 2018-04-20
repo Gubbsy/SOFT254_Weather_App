@@ -24,4 +24,7 @@
     <string name="buttonClearText">Clear</string>
     <string name="InputCleared">Input Cleared!</string>
     <string name="InputSent">Data Sent! Thank you!</string>
+    <string name="recordTitle">Data Sent! Thank you</string>
+    <string name="mapTitle">Check the result :)</string>
+    <string name="welcomeTitle">Welcome!</string>
 </resources>

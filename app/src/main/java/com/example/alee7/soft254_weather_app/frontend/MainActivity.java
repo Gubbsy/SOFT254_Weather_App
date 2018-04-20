@@ -49,6 +49,8 @@ public class MainActivity extends AppCompatActivity  {
         signinButton = findViewById(R.id.loginButton);
         registerButton = findViewById(R.id.registerButton);
 
+        setTitle(R.string.welcomeTitle);
+
         firebaseAuth = FirebaseAuth.getInstance();
 
         signinButton.setOnClickListener(new View.OnClickListener() {
