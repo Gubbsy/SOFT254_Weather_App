@@ -101,7 +101,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
            public void onComplete(@NonNull Task<QuerySnapshot> task) {
                if(task.isSuccessful()){
                    for(QueryDocumentSnapshot document: task.getResult()){
-                       CreateMarker(googleMap,(HashMap<String, Object>) document.getData());
+                       CreateMarker(mGoogleMap,(HashMap<String, Object>) document.getData());
                    }
                }
            }
