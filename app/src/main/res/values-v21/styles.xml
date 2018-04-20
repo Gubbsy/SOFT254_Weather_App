@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="AppTheme" parent="Theme.AppCompat">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@android:color/background_dark</item>
+        <item name="colorPrimaryDark">@color/NotSoBlack</item>
+        <item name="colorAccent">@color/ReallyRed</item>
+        <item name="android:fontFamily">@font/queenofclub</item>
+        <item name="android:statusBarColor">@color/NotSoBlack</item>
+    </style>
+</resources>
