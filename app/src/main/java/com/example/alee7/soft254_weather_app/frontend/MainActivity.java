@@ -70,7 +70,7 @@ public class MainActivity extends AppCompatActivity  {
 
     public void Login() {
 
-        ProgressDialog progressDialog = ProgressDialog.show(MainActivity.this, "Please wait...", "Proccessing.... ", true);
+        ProgressDialog progressDialog = ProgressDialog.show(MainActivity.this, "Please wait...", "Processing.... ", true);
 
         (firebaseAuth.signInWithEmailAndPassword(textEmail.getText().toString().trim(), textPsw.getText().toString().trim()))
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
@@ -79,7 +79,6 @@ public class MainActivity extends AppCompatActivity  {
                         progressDialog.dismiss();
 
                         if (task.isSuccessful()) {
-                            Toast.makeText(MainActivity.this, "Login Successful", Toast.LENGTH_LONG).show();
                             Intent i = new Intent(MainActivity.this, LoggedInActivity.class);
                             startActivity(i);
                         } else {
@@ -91,7 +90,7 @@ public class MainActivity extends AppCompatActivity  {
     }
 
     public void Register(){
-        ProgressDialog progressDialog = ProgressDialog.show(MainActivity.this, "Please wait...", "Proccessing.... ", true);
+        ProgressDialog progressDialog = ProgressDialog.show(MainActivity.this, "Please wait...", "Processing.... ", true);
 
         (firebaseAuth.createUserWithEmailAndPassword(textEmail.getText().toString().trim(), textPsw.getText().toString().trim()))
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {

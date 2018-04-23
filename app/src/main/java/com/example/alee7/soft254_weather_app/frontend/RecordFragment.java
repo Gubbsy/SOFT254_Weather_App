@@ -4,6 +4,9 @@ package com.example.alee7.soft254_weather_app.frontend;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Application;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -16,9 +19,11 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.nfc.Tag;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -60,25 +65,23 @@ public class RecordFragment extends Fragment implements SensorEventListener, Loc
 
     private RecordItem recordItem;
     private Boolean sensorHasRecorded = false;
-
-    private Button buttonSubmit, buttonClear;
-
-    private EditText editTextFeelsLike, editTextWindSpeed;
-    private Spinner spinnerWeatherType, spinnerWindDirection;
-    private TextView textViewPressure, textViewRecordedTemp;
+    private Boolean canSubmit = true;
 
     private WeatherType weatherType = null;
     private WindDirection windDirection = null;
     private double feelsLike, windSpeed, pressure = 0;
 
+    private Button buttonSubmit, buttonClear;
+    private EditText editTextFeelsLike, editTextWindSpeed;
+    private Spinner spinnerWeatherType, spinnerWindDirection;
+    private TextView textViewPressure;
+
     private SensorManager sensorManager;
     private Sensor pressureSensor;
-
     private LocationManager locationManager;
-
     private double lat, lon;
 
-    //Firebase
+    //FIREBASE
     private FirebaseFirestore fbData = FirebaseFirestore.getInstance();
     private CollectionReference dbRef = fbData.collection("weather-info");
     private FirebaseAuth fbAuth = FirebaseAuth.getInstance();
@@ -149,7 +152,12 @@ public class RecordFragment extends Fragment implements SensorEventListener, Loc
             public void onClick(View view) {
                 Log.i(TAG,"Submit Button Pressed");
 
-                if(editTextFeelsLike.getText().toString().trim().length() > 0 && editTextWindSpeed.getText().toString().trim().length() > 0){
+                if(editTextFeelsLike.getText().toString().trim().length() > 0 && editTextWindSpeed.getText().toString().trim().length() > 0 && canSubmit){
+
+                    canSubmit = false;
+
+                    buttonSubmit.setEnabled(false);
+                    buttonSubmit.setVisibility(View.INVISIBLE);
 
                     feelsLike = Double.parseDouble(editTextFeelsLike.getText().toString());
                     windSpeed = Double.parseDouble(editTextWindSpeed.getText().toString());
@@ -158,18 +166,9 @@ public class RecordFragment extends Fragment implements SensorEventListener, Loc
 
                     recordItem = new RecordItem(feelsLike, weatherType, windDirection, windSpeed, pressure, lat,lon);
 
-                    Log.i(TAG, "Record Item feelsLike: " + recordItem.getFeelsLike());
-                    Log.i(TAG, "Record Item weather type: " + recordItem.getWeatherType().toString());
-                    Log.i(TAG, "Record Item wind Direction: " + recordItem.getWindDirection().toString());
-                    Log.i(TAG, "Record Item wind speed: " + recordItem.getWindSpeed());
-                    Log.i(TAG, "Record Item pressure: " + recordItem.getLocalPressure());
-                    Log.i(TAG, "Record Item Lat: " + recordItem.getLatitude());
-                    Log.i(TAG, "Record Item Lon: : " + recordItem.getLongitude());
-
                     GeoPoint geoLocation = new GeoPoint(recordItem.getLatitude(), recordItem.getLongitude());
 
                     Map<String, Object> submitRef = new HashMap<>();
-
                     submitRef.put("location", geoLocation);
                     submitRef.put("pressure", recordItem.getLocalPressure());
                     submitRef.put("user-temp", recordItem.getFeelsLike());
@@ -177,19 +176,28 @@ public class RecordFragment extends Fragment implements SensorEventListener, Loc
                     submitRef.put("wind-direction", recordItem.getWindDirection().getPosition());
                     submitRef.put("wind-speed", recordItem.getWindSpeed());
                     submitRef.put("posterID", fbAuth.getUid());
-                    Calendar tempTest = Calendar.getInstance();
-                    tempTest.add(Calendar.HOUR, -15);
                     submitRef.put("postTime", Calendar.getInstance().getTime());
 
                     dbRef.add(submitRef).addOnCompleteListener(task -> {
                         if (task.isSuccessful()){
-                            Intent intent = new Intent(getContext(),LoggedInActivity.class);
-                            startActivity(intent);
+                            ClearPage();
+                            Toast.makeText(getContext(),"Submission successful, you may submit again in half an hour", Toast.LENGTH_LONG).show();
                         } else {
                             Toast.makeText(getContext(), task.getException().toString(), Toast.LENGTH_LONG).show();
                             Log.i(getTag(), "Failed");
                         }
                     });
+
+                    new CountDownTimer(1000*60*30, 1000) {
+                        public void onTick(long millisUntilFinished) {}
+                        public void onFinish() {
+                            Toast.makeText(getContext(), "You can submit data again", Toast.LENGTH_LONG).show();
+                            CreatePushNotification();
+                            canSubmit = true;
+                            buttonSubmit.setEnabled(true);
+                            buttonSubmit.setVisibility(View.VISIBLE);
+                        }
+                    }.start();
 
                 }else
                     Toast.makeText(getActivity(), "Please enter all fields", Toast.LENGTH_SHORT).show();
@@ -199,11 +207,7 @@ public class RecordFragment extends Fragment implements SensorEventListener, Loc
         buttonClear.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                editTextFeelsLike.setText("");
-                editTextWindSpeed.setText("");
-                sensorHasRecorded = false;
-                spinnerWeatherType.setSelection(0);
-                spinnerWindDirection.setSelection(0);
+                ClearPage();
             }
         });
         return view;
@@ -268,6 +272,36 @@ public class RecordFragment extends Fragment implements SensorEventListener, Loc
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
 
+    }
+
+    public void CreatePushNotification(){
+        Intent intent = new Intent(getContext(), LoggedInActivity.class);
+        PendingIntent contentIntent = PendingIntent.getActivity(getContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+        NotificationCompat.Builder b = new NotificationCompat.Builder(getContext());
+
+        b.setAutoCancel(true)
+                .setDefaults(Notification.DEFAULT_ALL)
+                .setWhen(System.currentTimeMillis())
+                .setSmallIcon(R.drawable.ic_launcher_foreground)
+                .setTicker("")
+                .setContentTitle("S.A.W. Needs You! Let's play a game")
+                .setContentText("You can record your local weather information again")
+                .setDefaults(Notification.DEFAULT_LIGHTS| Notification.DEFAULT_SOUND)
+                .setContentIntent(contentIntent)
+                .setContentInfo("Info");
+
+
+        NotificationManager notificationManager = (NotificationManager) getContext().getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.notify(1, b.build());
+    }
+
+    public void ClearPage(){
+        editTextFeelsLike.setText("");
+        editTextWindSpeed.setText("");
+        sensorHasRecorded = false;
+        spinnerWeatherType.setSelection(0);
+        spinnerWindDirection.setSelection(0);
     }
 
 }
