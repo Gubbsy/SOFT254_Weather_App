@@ -125,7 +125,7 @@ public class RecordFragment extends Fragment implements SensorEventListener, Loc
             Location location = locationManager.getLastKnownLocation(locationManager.NETWORK_PROVIDER);
             onLocationChanged(location);
         } catch(SecurityException e){
-            Toast.makeText(getActivity(), "Please Enable Location Permissions", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), R.string.Enable_Location, Toast.LENGTH_SHORT).show();
             getActivity().finish();
         }
 
@@ -139,8 +139,8 @@ public class RecordFragment extends Fragment implements SensorEventListener, Loc
         if(sensorManager.getDefaultSensor(Sensor.TYPE_PRESSURE) != null) {
             pressureSensor = sensorManager.getDefaultSensor(Sensor.TYPE_PRESSURE);
         } else {
-            Log.i(TAG, "Device has no Pressure Sensor built-in!");
-            textViewPressure.setText("Sensor not found.");
+            Log.i(TAG, getString(R.string.No_Pressure_Sensor));
+            textViewPressure.setText(R.string.Sensor_not_Found);
         }
 
 
@@ -150,8 +150,6 @@ public class RecordFragment extends Fragment implements SensorEventListener, Loc
         buttonSubmit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Log.i(TAG,"Submit Button Pressed");
-
                 if(editTextFeelsLike.getText().toString().trim().length() > 0 && editTextWindSpeed.getText().toString().trim().length() > 0 && canSubmit){
 
                     canSubmit = false;
@@ -181,17 +179,16 @@ public class RecordFragment extends Fragment implements SensorEventListener, Loc
                     dbRef.add(submitRef).addOnCompleteListener(task -> {
                         if (task.isSuccessful()){
                             ClearPage();
-                            Toast.makeText(getContext(),"Submission successful, you may submit again in half an hour", Toast.LENGTH_LONG).show();
+                            Toast.makeText(getContext(), R.string.Submission_Successful, Toast.LENGTH_LONG).show();
                         } else {
                             Toast.makeText(getContext(), task.getException().toString(), Toast.LENGTH_LONG).show();
-                            Log.i(getTag(), "Failed");
                         }
                     });
 
                     new CountDownTimer(1000*60*30, 1000) {
                         public void onTick(long millisUntilFinished) {}
                         public void onFinish() {
-                            Toast.makeText(getContext(), "You can submit data again", Toast.LENGTH_LONG).show();
+                            Toast.makeText(getContext(), R.string.Can_Submit, Toast.LENGTH_LONG).show();
                             CreatePushNotification();
                             canSubmit = true;
                             buttonSubmit.setEnabled(true);
@@ -200,7 +197,7 @@ public class RecordFragment extends Fragment implements SensorEventListener, Loc
                     }.start();
 
                 }else
-                    Toast.makeText(getActivity(), "Please enter all fields", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(), R.string.Enter_All_Feilds, Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -285,7 +282,7 @@ public class RecordFragment extends Fragment implements SensorEventListener, Loc
                 .setWhen(System.currentTimeMillis())
                 .setSmallIcon(R.drawable.ic_launcher_foreground)
                 .setTicker("")
-                .setContentTitle("S.A.W. Needs You! Let's play a game")
+                .setContentTitle(getString(R.string.SAW_Needs_You))
                 .setContentText("You can record your local weather information again")
                 .setDefaults(Notification.DEFAULT_LIGHTS| Notification.DEFAULT_SOUND)
                 .setContentIntent(contentIntent)

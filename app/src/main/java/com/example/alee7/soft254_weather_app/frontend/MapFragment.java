@@ -6,12 +6,10 @@ import android.graphics.Color;
 import android.graphics.Typeface;
 import android.location.Address;
 import android.location.Geocoder;
-import android.nfc.Tag;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -34,12 +32,10 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.GeoPoint;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
-import com.google.firebase.firestore.ServerTimestamp;
 
 import java.io.IOException;
 import java.util.Calendar;
@@ -131,7 +127,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
 
         GeoPoint geoPoint = (GeoPoint) recordItem.get("location");
 
-        String address = GetAdressFromLocation(geoPoint);
+        String address = GetAddressFromLocation(geoPoint);
 
         googleMap.addMarker(new MarkerOptions().position(new LatLng(geoPoint.getLatitude(), geoPoint.getLongitude())).title(address).snippet(
                 "Weather Type: " + WeatherType.getEnumByIndex(safeLongToInt((long)recordItem.get("weather-type"))).toString() +
@@ -171,7 +167,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         });
     }
 
-    public String GetAdressFromLocation(GeoPoint geoPoint){
+    public String GetAddressFromLocation(GeoPoint geoPoint){
         Geocoder geocoder = new Geocoder(getContext(), Locale.getDefault());
 
         try {
@@ -186,12 +182,11 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                 return (strReturnedAddress.toString());
             }
             else {
-                return ("No Address returned!");
+                return (getString(R.string.No_Address));
             }
         } catch (IOException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
-            return("Canont get Address!");
+            return(getString(R.string.Cannot_Get_Address));
         }
     }
 }

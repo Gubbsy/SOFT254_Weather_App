@@ -24,7 +24,20 @@
     <string name="buttonClearText">Clear</string>
     <string name="InputCleared">Input Cleared!</string>
     <string name="InputSent">Data Sent! Thank you!</string>
-    <string name="recordTitle">Data Sent! Thank you</string>
-    <string name="mapTitle">Check the result :)</string>
+    <string name="recordTitle">Record Your Data Here!</string>
+    <string name="mapTitle">Check Out the Weather Elsewhere!</string>
     <string name="welcomeTitle">Welcome!</string>
+    <string name="Please_Wait">Please wait...</string>
+    <string name="Processing">Processing....</string>
+    <string name="AC_Successful">Account Creation Successful</string>
+    <string name="Error">ERROR</string>
+    <string name="No_Address">No Address returned!</string>
+    <string name="Cannot_Get_Address">Cannot get Address!</string>
+    <string name="Enable_Location">Please Enable Location Permissions</string>
+    <string name="No_Pressure_Sensor">Device has no Pressure Sensor built-in!</string>
+    <string name="Sensor_not_Found">Sensor not found.</string>
+    <string name="Submission_Successful">Submission successful, you may submit again in half an hour</string>
+    <string name="Can_Submit">You can submit data again</string>
+    <string name="Enter_All_Feilds">Please enter all fields</string>
+    <string name="SAW_Needs_You">S.A.W. Needs You! Let\'s play a game</string>
 </resources>

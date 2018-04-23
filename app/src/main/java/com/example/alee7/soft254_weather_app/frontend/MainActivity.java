@@ -70,7 +70,7 @@ public class MainActivity extends AppCompatActivity  {
 
     public void Login() {
 
-        ProgressDialog progressDialog = ProgressDialog.show(MainActivity.this, "Please wait...", "Processing.... ", true);
+        ProgressDialog progressDialog = ProgressDialog.show(MainActivity.this, getString(R.string.Please_Wait), getString(R.string.Processing), true);
 
         (firebaseAuth.signInWithEmailAndPassword(textEmail.getText().toString().trim(), textPsw.getText().toString().trim()))
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
@@ -90,7 +90,7 @@ public class MainActivity extends AppCompatActivity  {
     }
 
     public void Register(){
-        ProgressDialog progressDialog = ProgressDialog.show(MainActivity.this, "Please wait...", "Processing.... ", true);
+        ProgressDialog progressDialog = ProgressDialog.show(MainActivity.this, getString(R.string.Please_Wait), getString(R.string.Processing), true);
 
         (firebaseAuth.createUserWithEmailAndPassword(textEmail.getText().toString().trim(), textPsw.getText().toString().trim()))
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
@@ -99,12 +99,12 @@ public class MainActivity extends AppCompatActivity  {
                         progressDialog.dismiss();
 
                         if (task.isSuccessful()) {
-                            Toast.makeText(MainActivity.this, "Account Creation Successful", Toast.LENGTH_LONG).show();
+                            Toast.makeText(MainActivity.this, R.string.AC_Successful, Toast.LENGTH_LONG).show();
                             Intent i = new Intent(MainActivity.this, MainActivity.class);
                             startActivity(i);
                         } else {
                             Toast.makeText(MainActivity.this, task.getException().getMessage(), Toast.LENGTH_LONG).show();
-                            Log.e("ERROR", task.getException().toString());
+                            Log.e(getString(R.string.Error), task.getException().toString());
                         }
                     }
                 });
