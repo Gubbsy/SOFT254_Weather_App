@@ -124,6 +124,7 @@ public class RecordFragment extends Fragment implements SensorEventListener, Loc
             locationManager = (LocationManager) getContext().getSystemService(Context.LOCATION_SERVICE);
             Location location = locationManager.getLastKnownLocation(locationManager.NETWORK_PROVIDER);
             onLocationChanged(location);
+            MapFragment.SetCurentLocation(lat,lon);
         } catch(SecurityException e){
             Toast.makeText(getActivity(), R.string.Enable_Location, Toast.LENGTH_SHORT).show();
             getActivity().finish();

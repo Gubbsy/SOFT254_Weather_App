@@ -59,6 +59,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     FirebaseFirestore fbData = FirebaseFirestore.getInstance();
     CollectionReference dbRef = fbData.collection("weather-info");
 
+    private static double ln,lt;
+
 
     public MapFragment() {
         // Required empty public constructor
@@ -111,7 +113,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
        });
 
 
-        CameraPosition statLib = CameraPosition.builder().target(new LatLng(50.689247, -4.044502)).zoom(16).tilt(45).build();
+        CameraPosition statLib = CameraPosition.builder().target(new LatLng(lt, ln)).zoom(16).tilt(45).build();
 
         googleMap.moveCamera(CameraUpdateFactory.newCameraPosition(statLib));
     }
@@ -189,5 +191,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
             e.printStackTrace();
             return(getString(R.string.Cannot_Get_Address));
         }
+    }
+
+    public static void SetCurentLocation(double lat, double lon){
+        ln = lon;
+        lt = lat;
     }
 }

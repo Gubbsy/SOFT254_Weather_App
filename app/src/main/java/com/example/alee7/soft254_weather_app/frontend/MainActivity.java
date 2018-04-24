@@ -30,7 +30,7 @@ import com.google.firebase.auth.FirebaseAuth;
 
 import junit.framework.Test;
 
-public class MainActivity extends AppCompatActivity  {
+public class MainActivity extends AppCompatActivity {
 
 
 
@@ -109,6 +109,7 @@ public class MainActivity extends AppCompatActivity  {
                     }
                 });
     }
+
 }
 
 
