@@ -40,4 +40,5 @@
     <string name="Can_Submit">You can submit data again</string>
     <string name="Enter_All_Feilds">Please enter all fields</string>
     <string name="SAW_Needs_You">S.A.W. Needs You! Let\'s play a game</string>
+    <string name="Only_Submit">You can only submit every half an hour</string>
 </resources>

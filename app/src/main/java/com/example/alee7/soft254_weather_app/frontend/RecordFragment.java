@@ -192,10 +192,11 @@ public class RecordFragment extends Fragment implements SensorEventListener, Loc
                             CreatePushNotification();
                             canSubmit = true;
                             buttonSubmit.setEnabled(true);
-                            buttonSubmit.setVisibility(View.VISIBLE);
                         }
                     }.start();
 
+                }else if (!canSubmit){
+                    Toast.makeText(getActivity(), R.string.Only_Submit, Toast.LENGTH_SHORT).show();
                 }else
                     Toast.makeText(getActivity(), R.string.Enter_All_Feilds, Toast.LENGTH_SHORT).show();
             }
