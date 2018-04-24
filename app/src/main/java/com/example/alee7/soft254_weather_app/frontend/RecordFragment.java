@@ -154,9 +154,6 @@ public class RecordFragment extends Fragment implements SensorEventListener, Loc
 
                     canSubmit = false;
 
-                    buttonSubmit.setEnabled(false);
-                    buttonSubmit.setVisibility(View.INVISIBLE);
-
                     feelsLike = Double.parseDouble(editTextFeelsLike.getText().toString());
                     windSpeed = Double.parseDouble(editTextWindSpeed.getText().toString());
                     weatherType = WeatherType.getEnumByIndex(spinnerWeatherType.getSelectedItemPosition());
