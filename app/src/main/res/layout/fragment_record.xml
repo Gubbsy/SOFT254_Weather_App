@@ -92,18 +92,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/wind_speed_text" />
 
-        <TextView
-            android:id="@+id/recorded_temp_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="20dp"
-            android:layout_marginTop="16dp"
-            android:text="@string/recorded_temp"
-            android:textColor="@android:color/white"
-            android:textSize="24sp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/pressure_text" />
-
         <EditText
             android:id="@+id/feels_like_editText"
             android:layout_width="wrap_content"
@@ -170,19 +158,6 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/wind_speed_text" />
 
-        <TextView
-            android:id="@+id/temp_recorded"
-            android:layout_width="80dp"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="80dp"
-            android:layout_marginTop="16dp"
-            android:text="0"
-            android:textAlignment="center"
-            android:textColor="@android:color/white"
-            android:textSize="24sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/pressure_recorded" />
-
         <Button
             android:id="@+id/button_submit"
             android:layout_width="wrap_content"
@@ -194,7 +169,7 @@
             android:textColor="@android:color/white"
             android:textSize="24sp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/recorded_temp_text" />
+            app:layout_constraintTop_toBottomOf="@+id/pressure_text" />
 
         <Button
             android:id="@+id/button_clear"
@@ -207,7 +182,7 @@
             android:textColor="@android:color/white"
             android:textSize="24sp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/recorded_temp_text" />
+            app:layout_constraintTop_toBottomOf="@+id/pressure_text" />
 
     </android.support.constraint.ConstraintLayout>
 </FrameLayout>

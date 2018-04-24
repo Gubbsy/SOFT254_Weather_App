@@ -41,4 +41,11 @@
     <string name="Enter_All_Feilds">Please enter all fields</string>
     <string name="SAW_Needs_You">S.A.W. Needs You! Let\'s play a game</string>
     <string name="Only_Submit">You can only submit every half an hour</string>
+    <string name="email_editText">ENTER YOUR E-MAIL</string>
+    <string name="passwordText">ENTER YOUR PASSWORD</string>
+    <string name="username_text">USERNAME</string>
+    <string name="loginButton">Login</string>
+    <string name="registerButton">Register</string>
+    <string name="loginText">Please login to proceed</string>
+    <string name="appFullName">Something About Weather</string>
 </resources>
