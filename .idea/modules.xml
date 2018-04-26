@@ -3,7 +3,9 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/SOFT254_Weather_App.iml" filepath="$PROJECT_DIR$/SOFT254_Weather_App.iml" />
+      <module fileurl="file://C:\Users\jamorgan\SOFT254_Weather_App\SOFT254_Weather_App.iml" filepath="C:\Users\jamorgan\SOFT254_Weather_App\SOFT254_Weather_App.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://C:\Users\jamorgan\SOFT254_Weather_App\app\app.iml" filepath="C:\Users\jamorgan\SOFT254_Weather_App\app\app.iml" />
     </modules>
   </component>
 </project>

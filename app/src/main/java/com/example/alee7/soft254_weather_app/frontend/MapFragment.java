@@ -10,12 +10,14 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.alee7.soft254_weather_app.R;
 import com.example.alee7.soft254_weather_app.enumerator.WeatherType;
@@ -32,17 +34,23 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.GeoPoint;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+
+import static android.content.ContentValues.TAG;
 
 
 /**
@@ -57,6 +65,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
 
     FirebaseFirestore fbData = FirebaseFirestore.getInstance();
     CollectionReference dbRef = fbData.collection("weather-info");
+
+    CollectionReference collectionReference = fbData.collection("doc-name");
 
     private static double ln,lt;
 
@@ -89,6 +99,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
     }
 
 
+    HashMap<String,String> names = new HashMap<String,String>();
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
@@ -96,11 +107,24 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         mGoogleMap = googleMap;
         googleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
 
-        Calendar testCal = Calendar.getInstance();
-        testCal.add(Calendar.HOUR, 12);
-        Date date = testCal.getTime();
 
-       dbRef.whereLessThanOrEqualTo("postTime", date).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+        String lastDataPulled = "";
+        collectionReference.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if(task.isSuccessful()){
+                    for(QueryDocumentSnapshot document: task.getResult()){
+                        Log.i("Test: ", "Filling document name list with returned data names: " + document.getId() + ", " + document.getData().toString());
+                        names.put(document.getId(),(String)document.get("doc-id"));
+                    }
+                    OnDocPullSuccess();
+                }
+            }
+        });
+
+
+
+       /*dbRef.whereLessThanOrEqualTo("postTime", date).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
            @Override
            public void onComplete(@NonNull Task<QuerySnapshot> task) {
                if(task.isSuccessful()){
@@ -109,12 +133,50 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
                    }
                }
            }
-       });
+       });*/
 
 
         CameraPosition statLib = CameraPosition.builder().target(new LatLng(lt, ln)).zoom(16).tilt(45).build();
 
         googleMap.moveCamera(CameraUpdateFactory.newCameraPosition(statLib));
+    }
+
+    private void OnDocPullSuccess(){
+        ArrayList<String> allDocs = new ArrayList<String>();
+
+        Log.i("Test: ", "Testing data in names hashmap, isEmpty(): " + names.isEmpty());
+
+        for(Map.Entry<String, String> name: names.entrySet()){
+            Log.i("Test: ", "Adding name to document list: " + name.getValue());
+            allDocs.add(name.getValue());
+        }
+
+        for(String docName: allDocs) {
+            DocumentReference newMarker = dbRef.document(docName);
+
+            newMarker.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                    if(task.isSuccessful())
+                        CreateMarker(mGoogleMap,(HashMap<String, Object>) task.getResult().getData());
+                    else
+                        Toast.makeText(getContext(), task.getException().toString(), Toast.LENGTH_LONG).show();
+                }
+            });
+            /*
+            Task<DocumentSnapshot> task = dbRef.document(docName).get();
+            if (task.isSuccessful()) {
+                Log.i("Test: ", "Document Retrieval successful @ document: " + docName);
+                DocumentSnapshot pulledData = task.getResult();
+                Log.i("Test: ", "Document data = " + pulledData.getData().toString());
+                if(pulledData != null){
+                    CreateMarker(mGoogleMap,(HashMap<String, Object>) pulledData.getData());
+                }
+            } else{
+                Toast.makeText(getContext(), task.getException().toString(), Toast.LENGTH_LONG).show();
+            }
+            */
+        }
     }
 
     public static int safeLongToInt(long l) {

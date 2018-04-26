@@ -37,10 +37,12 @@ import com.example.alee7.soft254_weather_app.enumerator.WeatherType;
 import com.example.alee7.soft254_weather_app.enumerator.WindDirection;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.GeoPoint;
 
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -71,9 +73,12 @@ public class RecordFragment extends Fragment implements SensorEventListener, Loc
     private LocationManager locationManager;
     private double lat, lon;
 
+    private String lastSubmissionID = "";
+
     //FIREBASE
     private FirebaseFirestore fbData = FirebaseFirestore.getInstance();
     private CollectionReference dbRef = fbData.collection("weather-info");
+    private CollectionReference namePullRef = fbData.collection("doc-name");
     private FirebaseAuth fbAuth = FirebaseAuth.getInstance();
 
 
@@ -143,7 +148,12 @@ public class RecordFragment extends Fragment implements SensorEventListener, Loc
             public void onClick(View view) {
                 if(editTextFeelsLike.getText().toString().trim().length() > 0 && editTextWindSpeed.getText().toString().trim().length() > 0 && canSubmit){
 
+                    DocumentReference localDb = dbRef.document();
                     canSubmit = false;
+
+                    Boolean wasSuccessful = false;
+
+
 
                     feelsLike = Double.parseDouble(editTextFeelsLike.getText().toString());
                     windSpeed = Double.parseDouble(editTextWindSpeed.getText().toString());
@@ -154,6 +164,10 @@ public class RecordFragment extends Fragment implements SensorEventListener, Loc
 
                     GeoPoint geoLocation = new GeoPoint(recordItem.getLatitude(), recordItem.getLongitude());
 
+                    Calendar test = Calendar.getInstance();
+                    test.add(Calendar.HOUR, -15);
+                    Date testDate = test.getTime();
+
                     Map<String, Object> submitRef = new HashMap<>();
                     submitRef.put("location", geoLocation);
                     submitRef.put("pressure", recordItem.getLocalPressure());
@@ -162,18 +176,27 @@ public class RecordFragment extends Fragment implements SensorEventListener, Loc
                     submitRef.put("wind-direction", recordItem.getWindDirection().getPosition());
                     submitRef.put("wind-speed", recordItem.getWindSpeed());
                     submitRef.put("posterID", fbAuth.getUid());
+                    //submitRef.put("postTime", testDate);
                     submitRef.put("postTime", Calendar.getInstance().getTime());
 
-                    dbRef.add(submitRef).addOnCompleteListener(task -> {
+                    Log.i("Test: ", "Before - Last submission ID = " + lastSubmissionID);
+                    lastSubmissionID = localDb.getId();
+                    Log.i("Test: ", "After - Last submission ID = " + lastSubmissionID);
+
+                    localDb.set(submitRef).addOnCompleteListener(task -> {
                         if (task.isSuccessful()){
                             ClearPage();
+                            Log.i("Test: ", "Submission task successful");
+                            submitDataName();
                             Toast.makeText(getContext(), R.string.Submission_Successful, Toast.LENGTH_LONG).show();
                         } else {
                             Toast.makeText(getContext(), task.getException().toString(), Toast.LENGTH_LONG).show();
                         }
                     });
 
-                    new CountDownTimer(1000*60*30, 1000) {
+
+
+                    new CountDownTimer(1000*2, 1000) {
                         public void onTick(long millisUntilFinished) {}
                         public void onFinish() {
                             Toast.makeText(getContext(), R.string.Can_Submit, Toast.LENGTH_LONG).show();
@@ -199,6 +222,20 @@ public class RecordFragment extends Fragment implements SensorEventListener, Loc
         return view;
     }
 
+
+    private void submitDataName() {
+        Log.i("Test: ", "Running method SubmitDataName");
+        HashMap localDBName = new HashMap<String,String>();
+        localDBName.put("doc-id", lastSubmissionID);
+        namePullRef.document().set(localDBName).addOnCompleteListener(task -> {
+            if (task.isSuccessful()){
+                Log.i("Test: ", "Submission of Data Name successful");
+                Toast.makeText(getContext(), "You have submitted to the new collection", Toast.LENGTH_LONG).show();
+            } else {
+                Toast.makeText(getContext(), task.getException().toString(), Toast.LENGTH_LONG).show();
+            }
+        });
+    }
 
     public RecordFragment() {
         // Required empty public constructor
