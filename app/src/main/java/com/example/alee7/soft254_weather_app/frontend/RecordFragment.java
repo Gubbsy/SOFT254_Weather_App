@@ -80,7 +80,7 @@ public class RecordFragment extends Fragment implements SensorEventListener, Loc
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        // Inflate the layout for this fragment
+        //Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_record, container, false);
 
         getActivity().setTitle(R.string.recordTitle);
