@@ -75,7 +75,7 @@ public class MainActivity extends AppCompatActivity {
                 });
         }catch(IllegalArgumentException e){
             progressDialog.dismiss();
-            Snackbar.make(this.findViewById(android.R.id.content), "Please enter your email and password!", Snackbar.LENGTH_SHORT).show();
+            Snackbar.make(this.findViewById(android.R.id.content), R.string.emptyData, Snackbar.LENGTH_SHORT).show();
             //Toast.makeText(MainActivity.this, e.toString(), Toast.LENGTH_LONG).show();
             Log.e(getString(R.string.Error), e.toString());
         }
@@ -100,7 +100,7 @@ public class MainActivity extends AppCompatActivity {
                 });
         }catch(IllegalArgumentException e){
             progressDialog.dismiss();
-            Snackbar.make(this.findViewById(android.R.id.content), "Please enter your email and password!", Snackbar.LENGTH_SHORT).show();
+            Snackbar.make(this.findViewById(android.R.id.content), R.string.emptyData, Snackbar.LENGTH_SHORT).show();
             //Toast.makeText(MainActivity.this, e.toString(), Toast.LENGTH_LONG).show();
             Log.e(getString(R.string.Error), e.toString());
         }
