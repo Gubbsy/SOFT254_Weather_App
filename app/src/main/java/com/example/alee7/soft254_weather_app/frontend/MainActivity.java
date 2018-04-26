@@ -4,9 +4,12 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -17,10 +20,10 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener{
 
 
-
+    //Define UI elements
     private EditText textEmail;
     private EditText textPsw;
     private Button signinButton, registerButton;
@@ -31,72 +34,121 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+        //Register UI Elements
         textEmail = findViewById(R.id.email_editText);
         textPsw = findViewById(R.id.password_editText);
         signinButton = findViewById(R.id.loginButton);
         registerButton = findViewById(R.id.registerButton);
 
+        //Register buttons' OnClickListener
+        signinButton.setOnClickListener(this);
+        registerButton.setOnClickListener(this);
+
+        //Change the title on the action bar
         setTitle(R.string.welcomeTitle);
 
+        //Get instance from FireBase
         firebaseAuth = FirebaseAuth.getInstance();
 
-        signinButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Login();
-            }
-        });
 
-        registerButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+    }
+
+    //Handle the action of buttons
+    @Override
+    public void onClick(View v) {
+        int id = v.getId();
+        switch(id){
+
+            case R.id.loginButton:
+                Login();
+                break;
+
+            case R.id.registerButton:
                 Register();
-            }
-        });
+                break;
+        }
     }
 
     public void Login() {
 
+        //Display the Progress Dialog while communicating with FireBase server
         ProgressDialog progressDialog = ProgressDialog.show(MainActivity.this, getString(R.string.Please_Wait), getString(R.string.Processing), true);
 
-        (firebaseAuth.signInWithEmailAndPassword(textEmail.getText().toString().trim(), textPsw.getText().toString().trim()))
-                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        progressDialog.dismiss();
+        //Prevent crash due to submission with empty String of textEmail and textPsw
+        try{
+            (firebaseAuth.signInWithEmailAndPassword(textEmail.getText().toString().trim(), textPsw.getText().toString().trim()))
+                    .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                        @Override
+                        public void onComplete(@NonNull Task<AuthResult> task) {
 
-                        if (task.isSuccessful()) {
-                            Intent i = new Intent(MainActivity.this, LoggedInActivity.class);
-                            startActivity(i);
-                        } else {
-                            Toast.makeText(MainActivity.this, task.getException().getMessage(), Toast.LENGTH_LONG).show();
-                            Log.e("ERROR", task.getException().toString());
+                            //Close the Progress Dialog
+                            progressDialog.dismiss();
+
+                            //Switch activity once logged in successfully
+                            if (task.isSuccessful()) {
+                                startActivity(new Intent(MainActivity.this, LoggedInActivity.class));
+                            }
                         }
-                    }
-                });
+                    });
+
+        }catch(IllegalArgumentException e){
+
+            //Close the Progress Dialog
+            progressDialog.dismiss();
+
+            //Show a Snackbar to ask user to fill in email and password
+            Snackbar.make(this.findViewById(android.R.id.content), R.string.emptyData, Snackbar.LENGTH_SHORT).show();
+
+            //Play the shake animation on both EdteText
+            textEmail.startAnimation(AnimationUtils.loadAnimation(MainActivity.this, R.anim.shake));
+            textPsw.startAnimation(AnimationUtils.loadAnimation(MainActivity.this, R.anim.shake));
+
+            Log.e(getString(R.string.Error), e.toString());
+        }
     }
 
     public void Register(){
+
+        //Display the Progress Dialog while communicating with FireBase server
         ProgressDialog progressDialog = ProgressDialog.show(MainActivity.this, getString(R.string.Please_Wait), getString(R.string.Processing), true);
 
-        (firebaseAuth.createUserWithEmailAndPassword(textEmail.getText().toString().trim(), textPsw.getText().toString().trim()))
-                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        progressDialog.dismiss();
+        //Prevent crash due to submission with empty String of textEmail and textPsw
+        try{
+            (firebaseAuth.createUserWithEmailAndPassword(textEmail.getText().toString().trim(), textPsw.getText().toString().trim()))
+                    .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                        @Override
+                        public void onComplete(@NonNull Task<AuthResult> task) {
 
-                        if (task.isSuccessful()) {
-                            Toast.makeText(MainActivity.this, R.string.AC_Successful, Toast.LENGTH_LONG).show();
-                            Intent i = new Intent(MainActivity.this, MainActivity.class);
-                            startActivity(i);
-                        } else {
-                            Toast.makeText(MainActivity.this, task.getException().getMessage(), Toast.LENGTH_LONG).show();
-                            Log.e(getString(R.string.Error), task.getException().toString());
+                            //Close the Progress Dialog
+                            progressDialog.dismiss();
+
+                            if (task.isSuccessful()) {
+
+                                //Show a Toast to notify user the registration has been done
+                                Toast.makeText(MainActivity.this, R.string.AC_Successful, Toast.LENGTH_LONG).show();
+
+                                //Switch to the next activity
+                                startActivity(new Intent(MainActivity.this, MainActivity.class));
+                            }
                         }
-                    }
-                });
-    }
+                    });
 
+        }catch(IllegalArgumentException e){
+
+            //Close the progress dialog
+            progressDialog.dismiss();
+
+            ////Show a Snackbar to ask user to fill in email and password
+            Snackbar.make(this.findViewById(android.R.id.content), R.string.emptyData, Snackbar.LENGTH_SHORT).show();
+
+            //Play the shake animation on both EdteText
+            textEmail.startAnimation(AnimationUtils.loadAnimation(MainActivity.this, R.anim.shake));
+            textPsw.startAnimation(AnimationUtils.loadAnimation(MainActivity.this, R.anim.shake));
+            
+            Log.e(getString(R.string.Error), e.toString());
+        }
+    }
 }
 
 

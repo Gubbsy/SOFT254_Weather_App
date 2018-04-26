@@ -48,4 +48,5 @@
     <string name="registerButton">Register</string>
     <string name="loginText">Please login to proceed</string>
     <string name="appFullName">Something About Weather</string>
+    <string name="emptyData">Please enter BOTH your email address and password!</string>
 </resources>
