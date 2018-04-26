@@ -38,6 +38,7 @@ import com.example.alee7.soft254_weather_app.enumerator.WindDirection;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.GeoPoint;
 
@@ -177,7 +178,7 @@ public class RecordFragment extends Fragment implements SensorEventListener, Loc
                     submitRef.put("wind-speed", recordItem.getWindSpeed());
                     submitRef.put("posterID", fbAuth.getUid());
                     //submitRef.put("postTime", testDate);
-                    submitRef.put("postTime", Calendar.getInstance().getTime());
+                    submitRef.put("postTime", FieldValue.serverTimestamp());
 
                     Log.i("Test: ", "Before - Last submission ID = " + lastSubmissionID);
                     lastSubmissionID = localDb.getId();
