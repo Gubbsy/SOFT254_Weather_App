@@ -8,6 +8,8 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -76,6 +78,9 @@ public class MainActivity extends AppCompatActivity {
         }catch(IllegalArgumentException e){
             progressDialog.dismiss();
             Snackbar.make(this.findViewById(android.R.id.content), R.string.emptyData, Snackbar.LENGTH_SHORT).show();
+            //Animation shake = AnimationUtils.loadAnimation(this, R.anim.shake);
+            textEmail.startAnimation(AnimationUtils.loadAnimation(MainActivity.this, R.anim.shake));
+            textPsw.startAnimation(AnimationUtils.loadAnimation(MainActivity.this, R.anim.shake));
             //Toast.makeText(MainActivity.this, e.toString(), Toast.LENGTH_LONG).show();
             Log.e(getString(R.string.Error), e.toString());
         }
@@ -102,6 +107,8 @@ public class MainActivity extends AppCompatActivity {
             progressDialog.dismiss();
             Snackbar.make(this.findViewById(android.R.id.content), R.string.emptyData, Snackbar.LENGTH_SHORT).show();
             //Toast.makeText(MainActivity.this, e.toString(), Toast.LENGTH_LONG).show();
+            textEmail.startAnimation(AnimationUtils.loadAnimation(MainActivity.this, R.anim.shake));
+            textPsw.startAnimation(AnimationUtils.loadAnimation(MainActivity.this, R.anim.shake));
             Log.e(getString(R.string.Error), e.toString());
         }
     }
