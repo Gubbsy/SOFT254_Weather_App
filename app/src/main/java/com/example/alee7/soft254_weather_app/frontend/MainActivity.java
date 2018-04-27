@@ -22,6 +22,9 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 public class MainActivity extends AppCompatActivity implements View.OnClickListener{
 
 
@@ -81,17 +84,25 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         //Prevent crash due to submission with empty String of textEmail and textPsw
         try{
             (firebaseAuth.signInWithEmailAndPassword(textEmail.getText().toString().trim(), textPsw.getText().toString().trim()))
-                    .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                        @Override
-                        public void onComplete(@NonNull Task<AuthResult> task) {
+                    .addOnCompleteListener(task -> {
 
-                            //Close the Progress Dialog
-                            progressDialog.dismiss();
+                        //Close the Progress Dialog
+                        progressDialog.dismiss();
 
-                            //Switch activity once logged in successfully
-                            if (task.isSuccessful()) {
-                                startActivity(new Intent(MainActivity.this, LoggedInActivity.class));
-                            }
+                        //Switch activity once logged in successfully
+                        if (task.isSuccessful()) {
+                            startActivity(new Intent(MainActivity.this, LoggedInActivity.class));
+                        }else{
+
+                            //play the error sound
+                            PlaySound(R.raw.error);
+
+                            //Play the shake animation on both EdteText
+                            textEmail.startAnimation(AnimationUtils.loadAnimation(MainActivity.this, R.anim.shake));
+                            textPsw.startAnimation(AnimationUtils.loadAnimation(MainActivity.this, R.anim.shake));
+
+                            //Make a Snackbar to notify user
+                            Snackbar.make(findViewById(android.R.id.content), R.string.wrongLogin, Snackbar.LENGTH_SHORT).show();
                         }
                     });
 
@@ -122,21 +133,36 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         //Prevent crash due to submission with empty String of textEmail and textPsw
         try{
             (firebaseAuth.createUserWithEmailAndPassword(textEmail.getText().toString().trim(), textPsw.getText().toString().trim()))
-                    .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                        @Override
-                        public void onComplete(@NonNull Task<AuthResult> task) {
+                    .addOnCompleteListener(task -> {
 
-                            //Close the Progress Dialog
-                            progressDialog.dismiss();
+                        //Close the Progress Dialog
+                        progressDialog.dismiss();
 
-                            if (task.isSuccessful()) {
+                        if (task.isSuccessful()) {
 
-                                //Show a Toast to notify user the registration has been done
-                                Toast.makeText(MainActivity.this, R.string.AC_Successful, Toast.LENGTH_LONG).show();
+                            //Show a Toast to notify user the registration has been done
+                            Toast.makeText(MainActivity.this, R.string.AC_Successful, Toast.LENGTH_LONG).show();
 
-                                //Switch to the next activity
-                                startActivity(new Intent(MainActivity.this, MainActivity.class));
-                            }
+                            //Switch to the next activity
+                            startActivity(new Intent(MainActivity.this, MainActivity.class));
+                        }else{
+
+                            //play the error sound
+                            PlaySound(R.raw.error);
+
+                            //Play the shake animation on both EdteText
+                            textEmail.startAnimation(AnimationUtils.loadAnimation(MainActivity.this, R.anim.shake));
+                            textPsw.startAnimation(AnimationUtils.loadAnimation(MainActivity.this, R.anim.shake));
+
+                            //Check whether user enters an email address
+                            if(isEmailValid(textEmail.getText().toString()))
+                            {
+                                //If yes, it's an existing email
+                                Snackbar.make(findViewById(android.R.id.content), R.string.wrongReg, Snackbar.LENGTH_SHORT).show();
+                            }else
+                                //If no, ask user to input an email address instead
+                                Snackbar.make(findViewById(android.R.id.content), R.string.notAnEmail, Snackbar.LENGTH_SHORT).show();
+
                         }
                     });
 
@@ -168,14 +194,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mp.start();
 
         //Check when the audio ends
-        mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-            @Override
-            public void onCompletion(MediaPlayer mp) {
+        mp.setOnCompletionListener(mp -> {
 
-                //Release the MediaPlayer otherwise exception will occur
-                mp.release();
-            }
+            //Release the MediaPlayer otherwise exception will occur
+            mp.release();
         });
+    }
+
+    public static boolean isEmailValid(String email) {
+        String expression = "^[\\w\\.-]+@([\\w\\-]+\\.)+[A-Z]{2,4}$";
+        Pattern pattern = Pattern.compile(expression, Pattern.CASE_INSENSITIVE);
+        Matcher matcher = pattern.matcher(email);
+        return matcher.matches();
     }
 }
 
