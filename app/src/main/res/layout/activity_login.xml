@@ -24,7 +24,7 @@
         android:layout_marginBottom="15dp"
         android:text="@string/loginText"
         android:textColor="@android:color/holo_orange_light"
-        android:textSize="36sp"
+        android:textSize="40sp"
         android:visibility="visible"
         app:layout_constraintBottom_toTopOf="@+id/email_editText"
         app:layout_constraintEnd_toEndOf="parent"
