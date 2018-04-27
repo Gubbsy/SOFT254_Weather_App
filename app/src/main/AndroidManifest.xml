@@ -11,11 +11,14 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
-        android:supportsRtl="true"
+        android:supportsRtl="false"
+        android:supportsPictureInPicture="false"
+        android:resizeableActivity="false"
         android:theme="@style/AppTheme">
         <activity
             android:name=".frontend.MainActivity"
-            android:label="@string/app_name">
+            android:label="@string/app_name"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -24,7 +27,8 @@
 
         <activity
             android:name=".frontend.LoggedInActivity"
-            android:label="@string/app_name">
+            android:label="@string/app_name"
+            android:screenOrientation="portrait">
         </activity>
         <meta-data
             android:name="com.google.android.geo.API_KEY"
