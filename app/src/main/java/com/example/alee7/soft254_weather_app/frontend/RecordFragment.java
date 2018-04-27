@@ -15,8 +15,10 @@ import android.hardware.SensorManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.NotificationCompat;
@@ -24,9 +26,11 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AnimationUtils;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -56,6 +60,9 @@ import static android.content.Context.SENSOR_SERVICE;
  */
 public class RecordFragment extends Fragment implements SensorEventListener, LocationListener {
 
+    private FrameLayout frmLayout;
+    private ConstraintLayout csLayout;
+    private MediaPlayer mp;
     private RecordItem recordItem;
     private Boolean sensorHasRecorded = false;
     private Boolean canSubmit = true;
@@ -92,6 +99,8 @@ public class RecordFragment extends Fragment implements SensorEventListener, Loc
         getActivity().setTitle(R.string.recordTitle);
 
         //Register UI Components
+        frmLayout = view.findViewById(R.id.frame_layout);
+        csLayout = view.findViewById(R.id.constraint_layout);
         buttonSubmit = view.findViewById(R.id.button_submit);
         buttonClear = view.findViewById(R.id.button_clear);
         editTextFeelsLike = view.findViewById(R.id.feels_like_editText);
@@ -209,8 +218,13 @@ public class RecordFragment extends Fragment implements SensorEventListener, Loc
 
                 }else if (!canSubmit){
                     Toast.makeText(getActivity(), R.string.Only_Submit, Toast.LENGTH_SHORT).show();
-                }else
+                    frmLayout.startAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.shake));
+                    PlaySound(R.raw.error);
+                }else {
                     Toast.makeText(getActivity(), R.string.Enter_All_Feilds, Toast.LENGTH_SHORT).show();
+                    frmLayout.startAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.shake));
+                    PlaySound(R.raw.error);
+                }
             }
         });
 
@@ -326,6 +340,25 @@ public class RecordFragment extends Fragment implements SensorEventListener, Loc
         sensorHasRecorded = false;
         spinnerWeatherType.setSelection(0);
         spinnerWindDirection.setSelection(0);
+    }
+
+    public void PlaySound(int resid){
+
+        //Register the MediaPlayer with resource file
+        mp = MediaPlayer.create(getContext(),resid);
+
+        //Play the sound
+        mp.start();
+
+        //Check when the audio ends
+        mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mp) {
+
+                //Release the MediaPlayer otherwise exception will occur
+                mp.release();
+            }
+        });
     }
 
 }

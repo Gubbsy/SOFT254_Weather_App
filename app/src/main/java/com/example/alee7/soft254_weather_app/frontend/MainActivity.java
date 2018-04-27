@@ -2,7 +2,9 @@ package com.example.alee7.soft254_weather_app.frontend;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -28,6 +30,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private EditText textPsw;
     private Button signinButton, registerButton;
     private FirebaseAuth firebaseAuth;
+    private MediaPlayer mp;
 
 
     @Override
@@ -100,6 +103,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             //Show a Snackbar to ask user to fill in email and password
             Snackbar.make(this.findViewById(android.R.id.content), R.string.emptyData, Snackbar.LENGTH_SHORT).show();
 
+            //Play the error sound
+            PlaySound(R.raw.error);
+
             //Play the shake animation on both EdteText
             textEmail.startAnimation(AnimationUtils.loadAnimation(MainActivity.this, R.anim.shake));
             textPsw.startAnimation(AnimationUtils.loadAnimation(MainActivity.this, R.anim.shake));
@@ -142,12 +148,34 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             ////Show a Snackbar to ask user to fill in email and password
             Snackbar.make(this.findViewById(android.R.id.content), R.string.emptyData, Snackbar.LENGTH_SHORT).show();
 
+            //Play the error sound
+            PlaySound(R.raw.error);
+
             //Play the shake animation on both EdteText
             textEmail.startAnimation(AnimationUtils.loadAnimation(MainActivity.this, R.anim.shake));
             textPsw.startAnimation(AnimationUtils.loadAnimation(MainActivity.this, R.anim.shake));
             
             Log.e(getString(R.string.Error), e.toString());
         }
+    }
+
+    public void PlaySound(int resid){
+
+        //Register the MediaPlayer with resource file
+        mp = MediaPlayer.create(this, resid);
+
+        //Play the sound
+        mp.start();
+
+        //Check when the audio ends
+        mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mp) {
+
+                //Release the MediaPlayer otherwise exception will occur
+                mp.release();
+            }
+        });
     }
 }
 
