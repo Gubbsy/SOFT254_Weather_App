@@ -52,4 +52,5 @@
     <string name="wrongLogin">Incorrect email or password, or account not exist</string>
     <string name="wrongReg">Existing email, please use another one</string>
     <string name="notAnEmail">Please use an email address to register</string>
+    <string name="inputCleared">Input cleared!</string>
 </resources>

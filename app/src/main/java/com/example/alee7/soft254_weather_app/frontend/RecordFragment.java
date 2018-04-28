@@ -153,87 +153,79 @@ public class RecordFragment extends Fragment implements SensorEventListener, Loc
         ////////////////////////////// BUTTON CLICKS LISTENERS//////////////////////////////////////
 
         //Create recordItem Object when button pressed
-        buttonSubmit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if(editTextFeelsLike.getText().toString().trim().length() > 0 && editTextWindSpeed.getText().toString().trim().length() > 0 && canSubmit){
+        buttonSubmit.setOnClickListener(view1 -> {
+            if(editTextFeelsLike.getText().toString().trim().length() > 0 && editTextWindSpeed.getText().toString().trim().length() > 0 && canSubmit){
 
-                    DocumentReference localDb = dbRef.document();
-                    canSubmit = false;
+                DocumentReference localDb = dbRef.document();
+                canSubmit = false;
 
-                    Boolean wasSuccessful = false;
+                Boolean wasSuccessful = false;
 
 
 
-                    feelsLike = Double.parseDouble(editTextFeelsLike.getText().toString());
-                    windSpeed = Double.parseDouble(editTextWindSpeed.getText().toString());
-                    weatherType = WeatherType.getEnumByIndex(spinnerWeatherType.getSelectedItemPosition());
-                    windDirection = WindDirection.getEnumByIndex(spinnerWindDirection.getSelectedItemPosition());
+                feelsLike = Double.parseDouble(editTextFeelsLike.getText().toString());
+                windSpeed = Double.parseDouble(editTextWindSpeed.getText().toString());
+                weatherType = WeatherType.getEnumByIndex(spinnerWeatherType.getSelectedItemPosition());
+                windDirection = WindDirection.getEnumByIndex(spinnerWindDirection.getSelectedItemPosition());
 
-                    recordItem = new RecordItem(feelsLike, weatherType, windDirection, windSpeed, pressure, lat,lon);
+                recordItem = new RecordItem(feelsLike, weatherType, windDirection, windSpeed, pressure, lat,lon);
 
-                    GeoPoint geoLocation = new GeoPoint(recordItem.getLatitude(), recordItem.getLongitude());
+                GeoPoint geoLocation = new GeoPoint(recordItem.getLatitude(), recordItem.getLongitude());
 
-                    Calendar test = Calendar.getInstance();
-                    test.add(Calendar.HOUR, -15);
-                    Date testDate = test.getTime();
+                Calendar test = Calendar.getInstance();
+                test.add(Calendar.HOUR, -15);
+                Date testDate = test.getTime();
 
-                    Map<String, Object> submitRef = new HashMap<>();
-                    submitRef.put("location", geoLocation);
-                    submitRef.put("pressure", recordItem.getLocalPressure());
-                    submitRef.put("user-temp", recordItem.getFeelsLike());
-                    submitRef.put("weather-type", recordItem.getWeatherType().getPosition());
-                    submitRef.put("wind-direction", recordItem.getWindDirection().getPosition());
-                    submitRef.put("wind-speed", recordItem.getWindSpeed());
-                    submitRef.put("posterID", fbAuth.getUid());
-                    //submitRef.put("postTime", testDate);
-                    submitRef.put("postTime", FieldValue.serverTimestamp());
+                Map<String, Object> submitRef = new HashMap<>();
+                submitRef.put("location", geoLocation);
+                submitRef.put("pressure", recordItem.getLocalPressure());
+                submitRef.put("user-temp", recordItem.getFeelsLike());
+                submitRef.put("weather-type", recordItem.getWeatherType().getPosition());
+                submitRef.put("wind-direction", recordItem.getWindDirection().getPosition());
+                submitRef.put("wind-speed", recordItem.getWindSpeed());
+                submitRef.put("posterID", fbAuth.getUid());
+                //submitRef.put("postTime", testDate);
+                submitRef.put("postTime", FieldValue.serverTimestamp());
 
-                    Log.i("Test: ", "Before - Last submission ID = " + lastSubmissionID);
-                    lastSubmissionID = localDb.getId();
-                    Log.i("Test: ", "After - Last submission ID = " + lastSubmissionID);
+                Log.i("Test: ", "Before - Last submission ID = " + lastSubmissionID);
+                lastSubmissionID = localDb.getId();
+                Log.i("Test: ", "After - Last submission ID = " + lastSubmissionID);
 
-                    localDb.set(submitRef).addOnCompleteListener(task -> {
-                        if (task.isSuccessful()){
-                            ClearPage();
-                            Log.i("Test: ", "Submission task successful");
-                            submitDataName();
-                            Toast.makeText(getContext(), R.string.Submission_Successful, Toast.LENGTH_LONG).show();
-                        } else {
-                            Toast.makeText(getContext(), task.getException().toString(), Toast.LENGTH_LONG).show();
-                        }
-                    });
+                localDb.set(submitRef).addOnCompleteListener(task -> {
+                    if (task.isSuccessful()){
+                        ClearPage();
+                        Log.i("Test: ", "Submission task successful");
+                        submitDataName();
+                        Toast.makeText(getContext(), R.string.Submission_Successful, Toast.LENGTH_LONG).show();
+                    } else {
+                        Toast.makeText(getContext(), task.getException().toString(), Toast.LENGTH_LONG).show();
+                    }
+                });
 
 
 
-                    new CountDownTimer(1000*2, 1000) {
-                        public void onTick(long millisUntilFinished) {}
-                        public void onFinish() {
-                            Toast.makeText(getContext(), R.string.Can_Submit, Toast.LENGTH_LONG).show();
-                            CreatePushNotification();
-                            canSubmit = true;
-                            buttonSubmit.setEnabled(true);
-                        }
-                    }.start();
+                new CountDownTimer(1000*2, 1000) {
+                    public void onTick(long millisUntilFinished) {}
+                    public void onFinish() {
+                        Toast.makeText(getContext(), R.string.Can_Submit, Toast.LENGTH_LONG).show();
+                        CreatePushNotification();
+                        canSubmit = true;
+                        buttonSubmit.setEnabled(true);
+                    }
+                }.start();
 
-                }else if (!canSubmit){
-                    Toast.makeText(getActivity(), R.string.Only_Submit, Toast.LENGTH_SHORT).show();
-                    frmLayout.startAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.shake));
-                    PlaySound(R.raw.error);
-                }else {
-                    Toast.makeText(getActivity(), R.string.Enter_All_Feilds, Toast.LENGTH_SHORT).show();
-                    frmLayout.startAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.shake));
-                    PlaySound(R.raw.error);
-                }
+            }else if (!canSubmit){
+                Toast.makeText(getActivity(), R.string.Only_Submit, Toast.LENGTH_SHORT).show();
+                frmLayout.startAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.shake));
+                PlaySound(R.raw.error);
+            }else {
+                Toast.makeText(getActivity(), R.string.Enter_All_Feilds, Toast.LENGTH_SHORT).show();
+                frmLayout.startAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.shake));
+                PlaySound(R.raw.error);
             }
         });
 
-        buttonClear.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                ClearPage();
-            }
-        });
+        buttonClear.setOnClickListener(view12 -> ClearPage());
         return view;
     }
 
@@ -340,6 +332,7 @@ public class RecordFragment extends Fragment implements SensorEventListener, Loc
         sensorHasRecorded = false;
         spinnerWeatherType.setSelection(0);
         spinnerWindDirection.setSelection(0);
+        Toast.makeText(getContext(), R.string.inputCleared, Toast.LENGTH_SHORT).show();
     }
 
     public void PlaySound(int resid){
@@ -351,13 +344,10 @@ public class RecordFragment extends Fragment implements SensorEventListener, Loc
         mp.start();
 
         //Check when the audio ends
-        mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-            @Override
-            public void onCompletion(MediaPlayer mp) {
+        mp.setOnCompletionListener(mp -> {
 
-                //Release the MediaPlayer otherwise exception will occur
-                mp.release();
-            }
+            //Release the MediaPlayer otherwise exception will occur
+            mp.release();
         });
     }
 

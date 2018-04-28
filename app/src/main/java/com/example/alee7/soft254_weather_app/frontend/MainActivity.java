@@ -185,6 +185,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
     }
 
+    //Method for playing sound
     public void PlaySound(int resid){
 
         //Register the MediaPlayer with resource file
@@ -201,10 +202,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         });
     }
 
+    //Method for determining whether the user input is an email address
     public static boolean isEmailValid(String email) {
+
+        //Define the format of an email address
         String expression = "^[\\w\\.-]+@([\\w\\-]+\\.)+[A-Z]{2,4}$";
+
+        //Define Pattern object with case insensitive
         Pattern pattern = Pattern.compile(expression, Pattern.CASE_INSENSITIVE);
+
+        //Define Matcher object and set the condition
         Matcher matcher = pattern.matcher(email);
+
+        //Return the boolean result
         return matcher.matches();
     }
 }
