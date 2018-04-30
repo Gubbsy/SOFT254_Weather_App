@@ -156,7 +156,7 @@ public class RecordFragment extends Fragment implements SensorEventListener, Loc
         buttonSubmit.setOnClickListener(view1 -> {
             if(editTextFeelsLike.getText().toString().trim().length() > 0 && editTextWindSpeed.getText().toString().trim().length() > 0 && canSubmit){
 
-                if(Double.parseDouble(editTextFeelsLike.getText().toString()) > -100 || Double.parseDouble(editTextFeelsLike.getText().toString()) > 100){
+                if(Double.parseDouble(editTextFeelsLike.getText().toString()) < -100 || Double.parseDouble(editTextFeelsLike.getText().toString()) > 100){
                     Toast.makeText(getContext(), "Temperature values out of range. Please enter a value between -100 and 100.", Toast.LENGTH_LONG).show();
                     return;
                 }
