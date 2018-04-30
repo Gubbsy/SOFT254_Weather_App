@@ -59,11 +59,13 @@ import static android.content.ContentValues.TAG;
  */
 public class MapFragment extends Fragment implements OnMapReadyCallback {
 
+    //Declare map variables
     GoogleMap mGoogleMap;
     MapView mMapView;
     View mView;
     Context context;
 
+    //Declare and get firebase reference
     FirebaseFirestore fbData = FirebaseFirestore.getInstance();
     CollectionReference dbRef = fbData.collection("weather-info");
 
@@ -102,12 +104,12 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
 
     HashMap<String,String> names = new HashMap<String,String>();
 
+    //Pull a list of all the names from the document collection
     @Override
     public void onMapReady(GoogleMap googleMap) {
         MapsInitializer.initialize(getContext());
         mGoogleMap = googleMap;
         googleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-
 
         String lastDataPulled = "";
         collectionReference.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -136,12 +138,11 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
            }
        });*/
 
-
         CameraPosition statLib = CameraPosition.builder().target(new LatLng(lt, ln)).zoom(16).tilt(45).build();
-
         googleMap.moveCamera(CameraUpdateFactory.newCameraPosition(statLib));
     }
 
+    //Once the name's collection is pulled iterate through each document extracting the infomation and creating a marker
     private void OnDocPullSuccess(){
         ArrayList<String> allDocs = new ArrayList<String>();
 
@@ -184,6 +185,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         }
     }
 
+    // Safe convertion of Long to Int
     public static int safeLongToInt(long l) {
         if (l < Integer.MIN_VALUE || l > Integer.MAX_VALUE) {
             throw new IllegalArgumentException
@@ -192,6 +194,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         return (int) l;
     }
 
+    //Create marker from extracted firebase HashMap infomation
     public void CreateMarker(GoogleMap googleMap, HashMap<String,Object> recordItem) {
 
         GeoPoint geoPoint = (GeoPoint) recordItem.get("location");
@@ -236,6 +239,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         });
     }
 
+    //Create address from the GeoPoint
     public String GetAddressFromLocation(GeoPoint geoPoint){
         Geocoder geocoder = new Geocoder(getContext(), Locale.getDefault());
 
@@ -259,6 +263,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback {
         }
     }
 
+    //Set current location for map intilaiation
     public static void SetCurentLocation(double lat, double lon){
         ln = lon;
         lt = lat;

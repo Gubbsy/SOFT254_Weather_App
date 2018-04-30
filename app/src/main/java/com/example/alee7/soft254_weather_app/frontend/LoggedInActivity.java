@@ -41,6 +41,7 @@ public class LoggedInActivity extends AppCompatActivity implements BottomNavigat
 
     }
 
+    //Set fragment dependant on navbar selection
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {

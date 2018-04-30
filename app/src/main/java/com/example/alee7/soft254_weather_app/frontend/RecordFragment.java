@@ -167,7 +167,7 @@ public class RecordFragment extends Fragment implements SensorEventListener, Loc
                 Boolean wasSuccessful = false;
 
 
-
+                //Pull values from input fields
                 feelsLike = Double.parseDouble(editTextFeelsLike.getText().toString());
                 windSpeed = Double.parseDouble(editTextWindSpeed.getText().toString());
                 weatherType = WeatherType.getEnumByIndex(spinnerWeatherType.getSelectedItemPosition());
@@ -181,6 +181,7 @@ public class RecordFragment extends Fragment implements SensorEventListener, Loc
                 test.add(Calendar.HOUR, -15);
                 Date testDate = test.getTime();
 
+                //Submit data to server
                 Map<String, Object> submitRef = new HashMap<>();
                 submitRef.put("location", geoLocation);
                 submitRef.put("pressure", recordItem.getLocalPressure());
@@ -196,6 +197,8 @@ public class RecordFragment extends Fragment implements SensorEventListener, Loc
                 lastSubmissionID = localDb.getId();
                 Log.i("Test: ", "After - Last submission ID = " + lastSubmissionID);
 
+
+                //Inform user of post success
                 localDb.set(submitRef).addOnCompleteListener(task -> {
                     if (task.isSuccessful()){
                         ClearPage();
@@ -207,8 +210,7 @@ public class RecordFragment extends Fragment implements SensorEventListener, Loc
                     }
                 });
 
-
-
+                //Countdown till next psot
                 new CountDownTimer(1000*60*30, 1000) {
                     public void onTick(long millisUntilFinished) {}
                     public void onFinish() {
@@ -219,6 +221,8 @@ public class RecordFragment extends Fragment implements SensorEventListener, Loc
                     }
                 }.start();
 
+
+            //Appropriate behaviour wether they can post
             }else if (!canSubmit){
                 Toast.makeText(getActivity(), R.string.Only_Submit, Toast.LENGTH_SHORT).show();
                 frmLayout.startAnimation(AnimationUtils.loadAnimation(getContext(), R.anim.shake));
@@ -229,11 +233,12 @@ public class RecordFragment extends Fragment implements SensorEventListener, Loc
                 PlaySound(R.raw.error);
             }
         });
-
+        //Clear values when cliclin clear button
         buttonClear.setOnClickListener(view12 -> ClearPage());
         return view;
     }
 
+    //Submiting the post Name/ID to collection
     private void submitDataName() {
         Log.i("Test: ", "Running method SubmitDataName");
         HashMap localDBName = new HashMap<String,String>();
@@ -308,6 +313,7 @@ public class RecordFragment extends Fragment implements SensorEventListener, Loc
 
     }
 
+    //Create push notification informing the user they can post again
     public void CreatePushNotification(){
         Intent intent = new Intent(getContext(), LoggedInActivity.class);
         PendingIntent contentIntent = PendingIntent.getActivity(getContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
@@ -330,6 +336,7 @@ public class RecordFragment extends Fragment implements SensorEventListener, Loc
         notificationManager.notify(1, b.build());
     }
 
+    //Clear and reset input fields
     public void ClearPage(){
         editTextFeelsLike.setText("");
         editTextWindSpeed.setText("");
@@ -339,6 +346,7 @@ public class RecordFragment extends Fragment implements SensorEventListener, Loc
         Toast.makeText(getContext(), R.string.inputCleared, Toast.LENGTH_SHORT).show();
     }
 
+    //Play sounds
     public void PlaySound(int resid){
 
         //Register the MediaPlayer with resource file
