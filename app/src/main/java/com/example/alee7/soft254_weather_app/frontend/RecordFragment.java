@@ -156,6 +156,10 @@ public class RecordFragment extends Fragment implements SensorEventListener, Loc
         buttonSubmit.setOnClickListener(view1 -> {
             if(editTextFeelsLike.getText().toString().trim().length() > 0 && editTextWindSpeed.getText().toString().trim().length() > 0 && canSubmit){
 
+                if(Double.parseDouble(editTextFeelsLike.getText().toString()) > -100 || Double.parseDouble(editTextFeelsLike.getText().toString()) > 100){
+                    Toast.makeText(getContext(), "Temperature values out of range. Please enter a value between -100 and 100.", Toast.LENGTH_LONG).show();
+                }
+
                 DocumentReference localDb = dbRef.document();
                 canSubmit = false;
 
@@ -204,7 +208,7 @@ public class RecordFragment extends Fragment implements SensorEventListener, Loc
 
 
 
-                new CountDownTimer(1000*2, 1000) {
+                new CountDownTimer(1000*60*30, 1000) {
                     public void onTick(long millisUntilFinished) {}
                     public void onFinish() {
                         Toast.makeText(getContext(), R.string.Can_Submit, Toast.LENGTH_LONG).show();
