@@ -158,6 +158,7 @@ public class RecordFragment extends Fragment implements SensorEventListener, Loc
 
                 if(Double.parseDouble(editTextFeelsLike.getText().toString()) > -100 || Double.parseDouble(editTextFeelsLike.getText().toString()) > 100){
                     Toast.makeText(getContext(), "Temperature values out of range. Please enter a value between -100 and 100.", Toast.LENGTH_LONG).show();
+                    return;
                 }
 
                 DocumentReference localDb = dbRef.document();
@@ -232,7 +233,6 @@ public class RecordFragment extends Fragment implements SensorEventListener, Loc
         buttonClear.setOnClickListener(view12 -> ClearPage());
         return view;
     }
-
 
     private void submitDataName() {
         Log.i("Test: ", "Running method SubmitDataName");
